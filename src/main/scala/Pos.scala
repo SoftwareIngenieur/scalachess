@@ -3,15 +3,17 @@ package chess
 import scala.math.{ abs, max, min }
 
 sealed case class Pos private (x: Int, y: Int, piotr: Char) {
+  def ⬃⬂⬁⬀(dest: Pos): Seq[Pos] = ⬃(dest) ++ ⬂(dest) ++ ⬁(dest) ++ ⬀(dest)
+
 
   import Pos.posAt
 
-  val down: Option[Pos]         = posAt(x, y - 1)
-  val left: Option[Pos]         = posAt(x - 1, y)
-  val downLeft: Option[Pos]     = posAt(x - 1, y - 1)
-  val downRight: Option[Pos]    = posAt(x + 1, y - 1)
-  lazy val up: Option[Pos]      = posAt(x, y + 1)
-  lazy val right: Option[Pos]   = posAt(x + 1, y)
+  val down: Option[Pos] = posAt(x, y - 1)
+  val left: Option[Pos] = posAt(x - 1, y)
+  val downLeft: Option[Pos] = posAt(x - 1, y - 1)
+  val downRight: Option[Pos] = posAt(x + 1, y - 1)
+  lazy val up: Option[Pos] = posAt(x, y + 1)
+  lazy val right: Option[Pos] = posAt(x + 1, y)
   lazy val upLeft: Option[Pos]  = posAt(x - 1, y + 1)
   lazy val upRight: Option[Pos] = posAt(x + 1, y + 1)
 
@@ -23,25 +25,66 @@ sealed case class Pos private (x: Int, y: Int, piotr: Char) {
     } getOrElse Nil
 
   def ?<(other: Pos): Boolean = x < other.x
+
   def ?>(other: Pos): Boolean = x > other.x
+
   def ?+(other: Pos): Boolean = y < other.y
+
   def ?^(other: Pos): Boolean = y > other.y
+
   def ?|(other: Pos): Boolean = x == other.x
+
   def ?-(other: Pos): Boolean = y == other.y
 
   def <->(other: Pos): Iterable[Pos] =
-    min(x, other.x) to max(x, other.x) flatMap { posAt(_, y) }
+    min(x, other.x) to max(x, other.x) flatMap {
+      posAt(_, y)
+    }
+
+  def ⬍(other: Pos): Iterable[Pos] =
+    min(y, other.y) to max(y, other.y) flatMap {
+      posAt(x, _)
+    }
+
+  def ⬀(other: Pos): Seq[Pos] = {
+    if (this ?< other && this ?+ other) {
+      Seq(this) ++ this.upRight.map(_.⬀(other)).getOrElse(Seq())
+    } else Seq(other)
+  }
+
+  def ⬁(other: Pos): Seq[Pos] = {
+    if (this ?> other && this ?+ other) {
+      Seq(this) ++ this.upLeft.map(_.⬁(other)).getOrElse(Seq())
+    } else Seq(other)
+
+  }
+
+  def ⬂(other: Pos): Seq[Pos] = {
+    if (this ?< other && this ?^ other) {
+      Seq(this) ++ this.downRight.map(_.⬂(other)).getOrElse(Seq())
+    } else Seq(other)
+
+  }
+
+  def ⬃(other: Pos): Seq[Pos] = {
+    if (this ?> other && this ?^ other) {
+      Seq(this) ++ this.downLeft.map(_.⬃(other)).getOrElse(Seq())
+    } else Seq(other)
+
+  }
 
   def touches(other: Pos): Boolean = xDist(other) <= 1 && yDist(other) <= 1
 
   def onSameDiagonal(other: Pos): Boolean = color == other.color && xDist(other) == yDist(other)
-  def onSameLine(other: Pos): Boolean     = ?-(other) || ?|(other)
+
+  def onSameLine(other: Pos): Boolean = ?-(other) || ?|(other)
 
   def xDist(other: Pos) = abs(x - other.x)
+
   def yDist(other: Pos) = abs(y - other.y)
 
-  val file     = Pos xToString x
-  val rank     = y.toString
+  val file = Pos xToString x
+  val rank = y.toString
   val key      = file + rank
   val color    = Color((x % 2 == 0) ^ (y % 2 == 0))
   val piotrStr = piotr.toString

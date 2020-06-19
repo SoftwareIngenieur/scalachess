@@ -9,20 +9,38 @@ case object Crazyhouse
     extends Variant(
       id = 10,
       key = "crazyhouse",
-      name = "Crazyhouse",
+      name = "Kagemusha",
       shortName = "Crazy",
       title = "Captured pieces can be dropped back on the board instead of moving a piece.",
       standardInitialPosition = true
     ) {
+//this is going to have chess960 placement
+//💂
+//🃏	🃟
+//👑
+//🛏️
+//🛅
+//🕐	🕑	🕒	🕓	🕔	🕕	🕖	🕗	🕘	🕙	🕚	🕛	🕜	🕝	🕞	🕟
+//🕠	🕡	🕢	🕣	🕤	🕥	🕦	🕧
+//🎭
+override val initialFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR/ w KQkq - 0 1"
+  val ANSI_RESET = "\u001B[0m"
+  val ANSI_BLACK = "\u001B[30m"
+  val ANSI_RED = "\u001B[31m"
+  val ANSI_GREEN = "\u001B[32m"
+  val ANSI_YELLOW = "\u001B[33m"
+  val ANSI_BLUE = "\u001B[34m"
+  val ANSI_PURPLE = "\u001B[35m"
+  val ANSI_CYAN = "\u001B[36m"
 
   def pieces = Standard.pieces
 
-  override val initialFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR/ w KQkq - 0 1"
+  val ANSI_WHITE = "\u001B[37m"
 
   override def valid(board: Board, strict: Boolean) = {
     val pieces = board.pieces.values
     (Color.all forall validSide(board, false) _) &&
-    (!strict || (pieces.count(_ is Pawn) <= 16 && pieces.size <= 32))
+      (!strict || (pieces.count(_ is Pawn) <= 16 && pieces.size <= 32))
   }
 
   private def canDropPawnOn(pos: Pos) = pos.y != 1 && pos.y != 8
@@ -50,13 +68,21 @@ case object Crazyhouse
     uci match {
       case Uci.Move(orig, dest, promOption) =>
         board.crazyData.fold(board) { data =>
-          val d1 = capture.fold(data) { data.store(_, dest) }
+          val d1 = capture.fold(data) {
+            data.store(_, dest)
+          }
           val d2 = promOption.fold(d1.move(orig, dest)) { _ =>
             d1 promote dest
           }
-          board withCrazyData d2
+
+          val (d3: Data, piece: Option[UniquePiece]) = d2 withUniquePieceMapUpdated(orig, dest)
+
+          val d4 = d3 withOutedImpersonatorsUpdated(orig, dest, piece, board)
+          val d5 = d4 withListOFRecentPiecesMoved(board.history.halfMoveClock, piece)
+          board withCrazyData d5
         }
-      case _ => board
+      case _ => //was a drop
+        board
     }
 
   private def canDropStuff(situation: Situation) =
@@ -75,7 +101,7 @@ case object Crazyhouse
   override def checkmate(situation: Situation) =
     super.checkmate(situation) && !canDropStuff(situation)
 
-  // there is always sufficient mating material in Crazyhouse
+  // there is always sufficient mating material in Kagemusha
   override def opponentHasInsufficientMaterial(situation: Situation) = false
   override def isInsufficientMaterial(board: Board)                  = false
 
@@ -102,13 +128,60 @@ case object Crazyhouse
   val storableRoles = List(Pawn, Knight, Bishop, Rook, Queen)
 
   case class Data(
-      pockets: Pockets,
-      // in crazyhouse, a promoted piece becomes a pawn
-      // when captured and put in the pocket.
-      // there we need to remember which pieces are issued from promotions.
-      // we do that by tracking their positions on the board.
-      promoted: Set[Pos]
-  ) {
+                   pockets: Pockets,
+                   // in crazyhouse, a promoted piece becomes a pawn
+                   // when captured and put in the pocket.
+                   // there we need to remember which pieces are issued from promotions.
+                   // we do that by tracking their positions on the board.
+                   promoted: Set[Pos],
+                   pieceMap: UniquePieceMap,
+                   listOfOuts: Set[UniquePiece],
+                   listOfTurnsAndUniquPiecesMoved: Map[Int, Option[UniquePiece]]
+                 ) {
+//    def recentlyMoved(numMoves: Int): Set[UniquePiece] = {
+//Set.empty
+//    }
+    def withListOFRecentPiecesMoved(halfMoveClock: Int, piece: Option[UniquePiece]) = {
+      val map = listOfTurnsAndUniquPiecesMoved.++(Map(halfMoveClock -> piece))
+      Data(pockets, promoted, pieceMap, listOfOuts, map)
+    }
+
+    def withOutedImpersonatorsUpdated(orig: Pos, dest: Pos, somePiece: Option[UniquePiece], board: Board): Data = somePiece match {
+      case Some(piece) if !isOuted(piece) =>
+        if (piece.positionsBetween(orig, dest).toSeq.forall(p => pieceThreatened(board, !piece.genericPiece.color, p))) {
+          Data(pockets, promoted, this.pieceMap, listOfOuts + piece, this.listOfTurnsAndUniquPiecesMoved)
+        } else {
+          this
+        }
+
+      case None => this
+    }
+
+    def isOuted(piece: UniquePiece): Boolean = {
+      listOfOuts.contains(piece)
+    }
+
+    def withUniquePieceMapUpdated(orig: Pos, dest: Pos): (Data, Option[UniquePiece]) = {
+
+      val onThatSquare = pieceMap.filter(_._2 == orig)
+      val pieceThatMoved = onThatSquare.headOption.map(_._1)
+
+      pieceThatMoved match {
+        case Some(uniquePiece) => {
+          val mapWithoutPieceThatMoved = pieceMap.removed(uniquePiece)
+          val mapWithPieceThatMovedAtNewLocation = mapWithoutPieceThatMoved.+((uniquePiece, dest))
+
+          (Data(pockets, promoted, mapWithPieceThatMovedAtNewLocation, listOfOuts, this.listOfTurnsAndUniquPiecesMoved), Some(uniquePiece))
+  }
+  case None => {
+    println("ERROR: withUniquePieceMapUpdated is failing")
+    (this, None)
+  }
+
+}
+
+    }
+
 
     def drop(piece: Piece): Option[Data] =
       pockets take piece map { nps =>
@@ -130,7 +203,20 @@ case object Crazyhouse
   }
 
   object Data {
-    val init = Data(Pockets(Pocket(Nil), Pocket(Nil)), Set.empty)
+def     pieceMapToUnique(standardPieceMap: PieceMap) = {
+  val uniquePieceMap = standardPieceMap.map{
+    case (pos,piece) => {
+      val uidFromStartingPosition = pos.x + 8 * pos.y - 9
+      println(s"${piece.unicode} ${pos.x} + 8 * ${pos.y} -9 = ${uidFromStartingPosition}")
+      (UniquePiece(uidFromStartingPosition,piece), pos)
+    }
+  }
+  uniquePieceMap
+}
+    def init(standardPieceMap: PieceMap) = {
+
+      Data(Pockets(Pocket(Nil), Pocket(Nil)), Set.empty, pieceMapToUnique(standardPieceMap), Set.empty[UniquePiece], Map(-1 -> None))
+    }
   }
 
   case class Pockets(white: Pocket, black: Pocket) {

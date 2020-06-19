@@ -23,6 +23,7 @@ package object chess
   type Directions = List[Direction]
 
   type PieceMap = Map[Pos, Piece]
+  type UniquePieceMap = Map[UniquePiece, Pos]
 
   type PositionHash = Array[Byte]
 

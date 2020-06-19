@@ -1,6 +1,83 @@
 package chess
 
+case class UniquePiece(id: Int, genericPiece: Piece){
+  def positionsBetween(orig: Pos, dest: Pos): Set[Pos] = {
+
+
+    genericPiece.role match {
+      case King => Set(dest)
+      case Queen => straightBetween(orig, dest) //(from onSameLine to) || (from onSameDiagonal to)
+      case Rook => straightBetween(orig, dest) //from onSameLine to
+      case Bishop => straightBetween(orig, dest) //from onSameDiagonal to
+      case Knight => Set(dest) //todo
+      case Pawn => straightBetween(orig, dest) //Piece.pawnEyes(color, from, to)
+    }
+  }
+
+  def straightBetween(orig: Pos, dest: Pos) = {
+    if (orig.onSameLine(dest)) {
+      orig.<->(dest).toSet ++ orig.⬍(dest).toSet
+    } else if (orig.onSameDiagonal(dest)) {
+      orig.⬃⬂⬁⬀(dest).toSet
+    }
+    else {
+      Set(dest)
+    }
+  }
+
+
+  def is(c: Color) = genericPiece.is(c)
+
+  def is(r: Role) = genericPiece.is(r)
+
+  def isNot(r: Role) = genericPiece.isNot(r)
+
+  def oneOf(rs: Set[Role]) = genericPiece.oneOf(rs)
+
+  def isMinor = genericPiece.isMinor
+
+  def isMajor = genericPiece.isMajor
+
+  def forsyth: Char = genericPiece.forsyth
+
+  // attackable positions assuming empty board
+  def eyes(from: Pos, to: Pos): Boolean = genericPiece.eyes(from,to)
+
+
+  // movable positions assuming empty board
+  def eyesMovable(from: Pos, to: Pos): Boolean =
+    genericPiece.eyesMovable(from,to)
+
+  override def toString =s"(${id.toString},${genericPiece.unicode})"
+}
 case class Piece(color: Color, role: Role) {
+  def unicode = {
+    color match {
+      case Color.White => role match {
+        case King   => "♔"
+        case Queen  => "♕"
+        case Rook   =>  "♖"
+        case Bishop =>  "♗"
+        case Knight => "♘"
+        case Pawn => "♙"
+      }
+      case Color.Black =>  role match {
+        case King   =>   "♚"
+        case Queen  =>"♛"
+        case Rook   => "♜"
+        case Bishop =>  "♝"
+        case Knight => "♞"
+        case Pawn => "♟︎"
+      }
+    }
+
+
+
+
+
+
+
+  }
 
   def is(c: Color)   = c == color
   def is(r: Role)    = r == role

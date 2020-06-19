@@ -3,14 +3,14 @@ package chess
 import Pos.posAt
 import scalaz.Validation.FlatMap._
 import scalaz.Validation.{ failureNel, success }
-import variant.{ Crazyhouse, Variant }
+import variant.{Crazyhouse=> Kagemusha, Variant }
 
 case class Board(
-    pieces: PieceMap,
-    history: History,
-    variant: Variant,
-    crazyData: Option[Crazyhouse.Data] = None
-) {
+                  pieces: PieceMap,
+                  history: History,
+                  variant: Variant,
+                  crazyData: Option[Kagemusha.Data] = None
+                ) {
 
   import implicitFailures._
 
@@ -122,18 +122,18 @@ case class Board(
   def withPieces(newPieces: PieceMap) = copy(pieces = newPieces)
 
   def withVariant(v: Variant): Board = {
-    if (v == Crazyhouse)
+    if (v == Kagemusha)
       copy(variant = v).ensureCrazyData
     else
       copy(variant = v)
   }
 
-  def withCrazyData(data: Crazyhouse.Data)         = copy(crazyData = Some(data))
-  def withCrazyData(data: Option[Crazyhouse.Data]) = copy(crazyData = data)
-  def withCrazyData(f: Crazyhouse.Data => Crazyhouse.Data): Board =
-    withCrazyData(f(crazyData | Crazyhouse.Data.init))
+  def withCrazyData(data: Kagemusha.Data)         = copy(crazyData = Some(data))
+  def withCrazyData(data: Option[Kagemusha.Data]) = copy(crazyData = data)
+  def withCrazyData(f: Kagemusha.Data => Kagemusha.Data): Board =
+    withCrazyData(f(crazyData | Kagemusha.Data.init(this.pieces)))
 
-  def ensureCrazyData = withCrazyData(crazyData | Crazyhouse.Data.init)
+  def ensureCrazyData = withCrazyData(crazyData | Kagemusha.Data.init(this.pieces))
 
   def unmovedRooks =
     UnmovedRooks {
@@ -191,12 +191,14 @@ object Board {
     Board(pieces.toMap, if (variant.allowsCastling) Castles.all else Castles.none, variant)
 
   def apply(pieces: Iterable[(Pos, Piece)], castles: Castles, variant: Variant): Board =
-    Board(pieces.toMap, History(castles = castles), variant, variantCrazyData(variant))
+    Board(pieces.toMap, History(castles = castles), variant, variantCrazyData(variant,pieces.toMap))
 
   def init(variant: Variant): Board = Board(variant.pieces, variant.castles, variant)
 
   def empty(variant: Variant): Board = Board(Nil, variant)
 
-  private def variantCrazyData(variant: Variant) =
-    (variant == Crazyhouse) option Crazyhouse.Data.init
+  private def variantCrazyData(variant: Variant, pieces: PieceMap) = {
+
+    (variant == Kagemusha) option Kagemusha.Data.init(pieces)
+  }
 }
