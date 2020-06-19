@@ -4,21 +4,21 @@ import variant.Crazyhouse
 
 class CrazyHouseVariantTest extends ChessTest {
 
-  "Kagemusha" should {
+  "Crazyhouse" should {
 
     "nothing to drop" in {
       val fenPosition = "3Nkb1r/1pQP1ppp/4p3/3N4/N5N1/6B1/PPPPBPPP/R1B2RK1 b - - 0 25"
       val game = {
-        fenToGame(fenPosition, Kagemusha).toOption err "ooopses"
+        fenToGame(fenPosition, Crazyhouse).toOption err "ooopses"
         }.updateBoard { b =>
         b.withCrazyData(
-          Kagemusha.Data(
-            pockets = Kagemusha.Pockets(
-              Kagemusha.Pocket(Nil),
-              Kagemusha.Pocket(Nil)
+          Crazyhouse.Data(
+            pockets = Crazyhouse.Pockets(
+              Crazyhouse.Pocket(Nil),
+              Crazyhouse.Pocket(Nil)
             ),
             promoted = Set.empty,
-            Kagemusha.Data.pieceMapToUnique(b.pieces),
+            Crazyhouse.Data.pieceMapToUnique(b.pieces),
             Set.empty,
             Map.empty
           )
@@ -31,16 +31,16 @@ class CrazyHouseVariantTest extends ChessTest {
     "pieces to drop, in vain" in {
       val fenPosition = "3Nkb1r/1pQP1ppp/4p3/3N4/N5N1/6B1/PPPPBPPP/R1B2RK1 b - - 0 25"
       val game = {
-        fenToGame(fenPosition, Kagemusha).toOption err "ooopses"
+        fenToGame(fenPosition, Crazyhouse).toOption err "ooopses"
         }.updateBoard { b =>
         b.withCrazyData(
-          Kagemusha.Data(
-            pockets = Kagemusha.Pockets(
-              Kagemusha.Pocket(Queen :: Nil),
-              Kagemusha.Pocket(Rook :: Pawn :: Pawn :: Nil)
+          Crazyhouse.Data(
+            pockets = Crazyhouse.Pockets(
+              Crazyhouse.Pocket(Queen :: Nil),
+              Crazyhouse.Pocket(Rook :: Pawn :: Pawn :: Nil)
             ),
             promoted = Set.empty,
-            Kagemusha.Data.pieceMapToUnique(b.pieces),
+            Crazyhouse.Data.pieceMapToUnique(b.pieces),
             Set.empty,
             Map.empty
 
@@ -55,7 +55,7 @@ class CrazyHouseVariantTest extends ChessTest {
       import Pos._
       "tons of pointless moves but shouldn't apply 50-moves" in {
         val moves = List.fill(30)(List(B1 -> C3, B8 -> C6, C3 -> B1, C6 -> B8))
-        Game(Kagemusha).playMoves(moves.flatten: _*) must beSuccess.like {
+        Game(Crazyhouse).playMoves(moves.flatten: _*) must beSuccess.like {
           case g =>
             g.board.variant.fiftyMoves(g.board.history) must beFalse
             g.board.autoDraw must beTrue // fivefold repetition
@@ -161,7 +161,7 @@ class CrazyHouseVariantTest extends ChessTest {
           F2 -> G2,
           H6 -> G6
         )
-        Game(Kagemusha).playMoves(moves: _*) must beSuccess.like {
+        Game(Crazyhouse).playMoves(moves: _*) must beSuccess.like {
           case g => g.board.history.threefoldRepetition must beTrue
         }
       }
@@ -259,14 +259,14 @@ class CrazyHouseVariantTest extends ChessTest {
           G2 -> F2,
           G6 -> H6
         )
-        Game(Kagemusha).playMoves(moves: _*) must beSuccess.like {
+        Game(Crazyhouse).playMoves(moves: _*) must beSuccess.like {
           case g => g.board.history.threefoldRepetition must beFalse
         }
       }
       "not draw when only kings left" in {
         val fenPosition = "k6K/8/8/8/8/8/8/8 w - - 0 25"
         val game = {
-          fenToGame(fenPosition, Kagemusha).toOption err "error"
+          fenToGame(fenPosition, Crazyhouse).toOption err "error"
         }
         game.situation.autoDraw must beFalse
         game.situation.end must beFalse
@@ -278,7 +278,7 @@ class CrazyHouseVariantTest extends ChessTest {
         _.split(' ').toList
       }
       def runOne(moves: List[String]) =
-        Replay.gameMoveWhileValid(moves, format.Forsyth.initial, Kagemusha)
+        Replay.gameMoveWhileValid(moves, format.Forsyth.initial, Crazyhouse)
       def hex(buf: Array[Byte]): String = buf.map("%02x" format _).mkString
       val g                             = gameMoves.map(runOne)
       g.exists(_._3.nonEmpty) must beFalse
@@ -294,7 +294,7 @@ class CrazyHouseVariantTest extends ChessTest {
       import chess.Pos._
       chess
         .Game(
-          Kagemusha.some,
+          Crazyhouse.some,
           "r2q1b1r/p2k1Ppp/2p2p2/4p3/P2nP2n/3P1PRP/1PPB1K1q~/RN1Q1B2/Npb w - - 40 21".some
         )
         .situation
@@ -331,7 +331,7 @@ class CrazyHouseVariantTest extends ChessTest {
           "B@f7#"
         ),
         initialFen = None,
-        variant = Kagemusha
+        variant = Crazyhouse
       ) must beSuccess.like {
         case _ => 1 must_== 1
       }

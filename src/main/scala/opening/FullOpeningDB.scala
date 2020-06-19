@@ -13,7 +13,7 @@ object FullOpeningDB {
       .map { o =>
         o.fen -> o
       }
-      .to(Map)
+    .toMap
 
   def findByFen(fen: FEN): Option[FullOpening] =
     fen.value.split(' ').take(4) match {
@@ -25,6 +25,10 @@ object FullOpeningDB {
         byFen get List(board, turn, castle, ep).mkString(" ")
       case _ => None
     }
+
+  def findByFenFen(fen: String): Option[FullOpening] =
+    findByFen(FEN(fen))
+
 
   val SEARCH_MAX_PLIES = 40
 

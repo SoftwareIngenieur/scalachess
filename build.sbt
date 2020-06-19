@@ -2,7 +2,7 @@ name := "scalachess"
 
 organization := "org.lichess"
 
-version := "9.5.0"
+version := "9.5.2"
 
 scalaVersion := "2.13.2"
 
@@ -36,3 +36,5 @@ scalacOptions ++= Seq(
 )
 
 publishTo := Some(Resolver.file("file", new File(sys.props.getOrElse("publishTo", ""))))
+//publishConfiguration := publishConfiguration.value.withOverwrite(true)
+//publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true)
