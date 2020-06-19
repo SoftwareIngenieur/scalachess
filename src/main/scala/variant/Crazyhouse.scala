@@ -136,7 +136,8 @@ override val initialFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR/ w KQkq -
                    promoted: Set[Pos],
                    pieceMap: UniquePieceMap,
                    listOfOuts: Set[UniquePiece],
-                   listOfTurnsAndUniquPiecesMoved: Map[Int, Option[UniquePiece]]
+                   listOfTurnsAndUniquPiecesMoved: Map[Int, Option[UniquePiece]],
+                   listOfOutPos: Seq[Pos] = Seq()
                  ) {
 //    def recentlyMoved(numMoves: Int): Set[UniquePiece] = {
 //Set.empty

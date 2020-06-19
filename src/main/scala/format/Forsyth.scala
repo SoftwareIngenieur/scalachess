@@ -210,7 +210,8 @@ object Forsyth {
 
   private def exportCrazyPocket(board: Board) =
     board.crazyData match {
-      case Some(variant.Crazyhouse.Data(pockets, _,_,_,_)) =>
+      case Some(variant.Crazyhouse.Data(pockets, _,_,_,_,outPos)) =>
+        println(s"Forsyth.exportCrazyData: outPos= $outPos ... crazyData= ${board.crazyData}...")
         "/" +
           pockets.white.roles.map(_.forsythUpper).mkString +
           pockets.black.roles.map(_.forsyth).mkString
