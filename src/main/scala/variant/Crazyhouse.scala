@@ -147,15 +147,18 @@ override val initialFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR/ w KQkq -
       Data(pockets, promoted, pieceMap, listOfOuts, map)
     }
 
-    def withOutedImpersonatorsUpdated(orig: Pos, dest: Pos, somePiece: Option[UniquePiece], board: Board): Data = somePiece match {
-      case Some(piece) if !isOuted(piece) =>
-        if (piece.positionsBetween(orig, dest).toSeq.forall(p => pieceThreatened(board, !piece.genericPiece.color, p))) {
-          Data(pockets, promoted, this.pieceMap, listOfOuts + piece, this.listOfTurnsAndUniquPiecesMoved)
-        } else {
-          this
-        }
+    def withOutedImpersonatorsUpdated(orig: Pos, dest: Pos, somePiece: Option[UniquePiece], board: Board): Data = {
+      println(s"withOutedImpersonatorsUpdated: somePiece: $somePiece")
+      somePiece match {
+        case Some(piece) =>  //if !isOuted(piece) =>
+         // if (piece.positionsBetween(orig, dest).toSeq.forall(p => pieceThreatened(board, !piece.genericPiece.color, p))) {
+            Data(pockets, promoted, this.pieceMap, listOfOuts + piece, this.listOfTurnsAndUniquPiecesMoved)
+         // } else {
+        //    this
+        //  }
 
-      case None => this
+        case None => this
+      }
     }
 
     def isOuted(piece: UniquePiece): Boolean = {
