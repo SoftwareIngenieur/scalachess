@@ -48,7 +48,7 @@ override val initialFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR/ w KQkq -
       case recentTurns: Seq[UniquePiece] =>
         allMoves.collect{
           case (k : Pos, moves) if
-            situation.board.crazyData.get. thispiecewasrecentlymoved3(recentTurns, k) =>
+            !situation.board.crazyData.get. thispiecewasrecentlymoved3(recentTurns, k) =>
             (k,moves)
 
           }
