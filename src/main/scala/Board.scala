@@ -3,13 +3,13 @@ package chess
 import Pos.posAt
 import scalaz.Validation.FlatMap._
 import scalaz.Validation.{ failureNel, success }
-import variant.{Crazyhouse=> Kagemusha, Variant }
+import variant.{Crazyhouse, Variant }
 
 case class Board(
                   pieces: PieceMap,
                   history: History,
                   variant: Variant,
-                  crazyData: Option[Kagemusha.Data] = None
+                  crazyData: Option[Crazyhouse.Data] = None
                 ) {
 
   import implicitFailures._
@@ -122,18 +122,18 @@ case class Board(
   def withPieces(newPieces: PieceMap) = copy(pieces = newPieces)
 
   def withVariant(v: Variant): Board = {
-    if (v == Kagemusha)
+    if (v == Crazyhouse)
       copy(variant = v).ensureCrazyData
     else
       copy(variant = v)
   }
 
-  def withCrazyData(data: Kagemusha.Data)         = copy(crazyData = Some(data))
-  def withCrazyData(data: Option[Kagemusha.Data]) = copy(crazyData = data)
-  def withCrazyData(f: Kagemusha.Data => Kagemusha.Data): Board =
-    withCrazyData(f(crazyData | Kagemusha.Data.init(this.pieces)))
+  def withCrazyData(data: Crazyhouse.Data)         = copy(crazyData = Some(data))
+  def withCrazyData(data: Option[Crazyhouse.Data]) = copy(crazyData = data)
+  def withCrazyData(f: Crazyhouse.Data => Crazyhouse.Data): Board =
+    withCrazyData(f(crazyData | Crazyhouse.Data.init(this.pieces)))
 
-  def ensureCrazyData = withCrazyData(crazyData | Kagemusha.Data.init(this.pieces))
+  def ensureCrazyData = withCrazyData(crazyData | Crazyhouse.Data.init(this.pieces))
 
   def unmovedRooks =
     UnmovedRooks {
@@ -199,6 +199,6 @@ object Board {
 
   private def variantCrazyData(variant: Variant, pieces: PieceMap) = {
 
-    (variant == Kagemusha) option Kagemusha.Data.init(pieces)
+    (variant == Crazyhouse) option Crazyhouse.Data.init(pieces)
   }
 }

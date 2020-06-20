@@ -37,10 +37,32 @@ override val initialFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR/ w KQkq -
 
   val ANSI_WHITE = "\u001B[37m"
 
+  def getInvalidTurnsTooSoon(listOfTurnsAndUniquPiecesMoved:  Map[Int, Option[UniquePiece]], board: Board): Boolean = {
+    true
+  }
+  // In this variant, a player cant move a piece twice in a row
+  override def validMoves(situation: Situation): Map[Pos, List[Move]]  = {
+    val allMoves       = super.validMoves(situation)
+
+    situation.board.crazyData.get.recentTurns(situation.history.halfMoveClock, situation.color) match {
+      case recentTurns: Seq[UniquePiece] =>
+        allMoves.collect{
+          case (k : Pos, moves) if
+            situation.board.crazyData.get. thispiecewasrecentlymoved3(recentTurns, k) =>
+            (k,moves)
+
+          }
+
+      }
+  }
   override def valid(board: Board, strict: Boolean) = {
     val pieces = board.pieces.values
-    (Color.all forall validSide(board, false) _) &&
+   val crazyHouseValid = (Color.all forall validSide(board, false) _) &&
       (!strict || (pieces.count(_ is Pawn) <= 16 && pieces.size <= 32))
+    val kageMushaValid = board.crazyData.map(_.listOfTurnsAndUniquPiecesMoved).map(getInvalidTurnsTooSoon(_, board))
+    crazyHouseValid && kageMushaValid.getOrElse(true)
+
+
   }
 
   private def canDropPawnOn(pos: Pos) = pos.y != 1 && pos.y != 8
@@ -139,7 +161,30 @@ override val initialFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR/ w KQkq -
                    listOfTurnsAndUniquPiecesMoved: Map[Int, Option[UniquePiece]],
                    listOfOutPos: Seq[Pos] = Seq()
                  ) {
-//    def recentlyMoved(numMoves: Int): Set[UniquePiece] = {
+    def thispiecewasrecentlymoved3(recentTurns: Seq[UniquePiece], k: Pos): Boolean = {
+      recentTurns.exists(thispiecewasrecentlymoved(_,k))
+    }
+
+    def recentTurns(halfMoveClock: Int, color: Color):Seq[UniquePiece] = {
+      val ♜ = Piece.pieceFromUnicode("♜")
+   Seq(listOfTurnsAndUniquPiecesMoved.getOrElse(halfMoveClock, UniquePiece(10002, ♜)),
+      listOfTurnsAndUniquPiecesMoved.getOrElse(halfMoveClock-1, UniquePiece(10003,♜ )),
+      listOfTurnsAndUniquPiecesMoved.getOrElse(halfMoveClock-2, UniquePiece(10004, ♜)),
+      listOfTurnsAndUniquPiecesMoved.getOrElse(halfMoveClock-3, UniquePiece(10005, ♜)),
+      listOfTurnsAndUniquPiecesMoved.getOrElse(halfMoveClock-4, UniquePiece(10006, ♜)))
+        .collect {
+          case u: UniquePiece if u.is(color) && u.id < 1000 => u
+        }
+
+
+    }
+
+
+    def thispiecewasrecentlymoved(lastThreeMovesThisColor: UniquePiece, k: Pos): Boolean = {
+     pieceMap(lastThreeMovesThisColor) == k
+    }
+
+    //    def recentlyMoved(numMoves: Int): Set[UniquePiece] = {
 //Set.empty
 //    }
     def withListOFRecentPiecesMoved(halfMoveClock: Int, piece: Option[UniquePiece]) = {

@@ -51,6 +51,7 @@ case class UniquePiece(id: Int, genericPiece: Piece){
   override def toString =s"(${id.toString},${genericPiece.unicode})"
 }
 case class Piece(color: Color, role: Role) {
+
   def unicode = {
     color match {
       case Color.White => role match {
@@ -121,6 +122,29 @@ case class Piece(color: Color, role: Role) {
 }
 
 object Piece {
+
+  def pieceFromUnicode(unicode: String): Piece = {
+    unicode match {
+      case "♔" => Piece(Color.White, King)
+      case "♕" => Piece(Color.White, Queen)
+      case "♖" => Piece(Color.White, Rook)
+      case "♗" => Piece(Color.White, Bishop)
+      case "♘" => Piece(Color.White, Knight)
+      case "♙" => Piece(Color.White, Pawn)
+
+      case "♚" => Piece(Color.Black, King)
+      case "♛" => Piece(Color.Black, Queen)
+      case "♜" => Piece(Color.Black, Rook)
+      case "♝" => Piece(Color.Black, Bishop)
+      case "♞" => Piece(Color.Black, Knight)
+      case "♟︎" =>Piece(Color.Black, Pawn)
+
+      case huh => {
+        println(s"ERROR in pieceFromUnicode. argument was $huh")
+        Piece(Color.black, Pawn)
+      }
+    }
+  }
 
   def fromChar(c: Char): Option[Piece] =
     Role.allByPgn get c.toUpper map {
