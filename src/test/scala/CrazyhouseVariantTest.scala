@@ -1,7 +1,5 @@
 package chess
 
-import variant.Crazyhouse
-
 class CrazyHouseVariantTest extends ChessTest {
 
   "Crazyhouse" should {

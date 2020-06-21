@@ -1,5 +1,6 @@
 package chess
 
+import chess.variant.crazy.Crazyhouse
 import format.Uci
 
 case class Situation(board: Board, color: Color) {
@@ -14,7 +15,7 @@ case class Situation(board: Board, color: Color) {
 
   def drops: Option[List[Pos]] =
     board.variant match {
-      case v: variant.Crazyhouse.type => v possibleDrops this
+      case v: Crazyhouse.type => v possibleDrops this
       case _                          => None
     }
 

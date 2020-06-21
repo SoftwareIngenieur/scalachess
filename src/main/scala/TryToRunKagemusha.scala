@@ -1,0 +1,3 @@
+object TryToRunKagemusha extends App{
+
+}

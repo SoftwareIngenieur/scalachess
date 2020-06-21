@@ -2,7 +2,7 @@ package chess
 
 import Pos._
 import format.Uci
-import variant.{ Antichess, Atomic, Crazyhouse, Standard, ThreeCheck }
+import variant.{Antichess, Atomic, Standard, ThreeCheck}
 
 class HashTest extends ChessTest {
   def hexToBytes(str: String) =

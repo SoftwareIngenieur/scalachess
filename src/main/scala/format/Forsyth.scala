@@ -1,8 +1,9 @@
 package chess
 package format
 
-import variant.{ Standard, Variant }
-
+import variant.{Standard, Variant}
+import variant.crazy.Crazyhouse
+import variant.crazy.CrazyhouseData
 /**
   * Transform a game to standard Forsyth Edwards Notation
   * http://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
@@ -137,7 +138,7 @@ object Forsyth {
           if (promoted.isEmpty) board else board.withCrazyData(_.copy(promoted = promoted))
       } map { board =>
         pockets.fold(board) { str =>
-          import chess.variant.Crazyhouse.{ Pocket, Pockets }
+          import chess.variant.crazy.{ Pocket, Pockets }
           val (white, black) = str.toList.flatMap(Piece.fromChar).partition(_ is White)
           board.withCrazyData(
             _.copy(
@@ -181,6 +182,8 @@ object Forsyth {
       case SituationPlus(situation, _) => >>(Game(situation, turns = parsed.turns))
     }
 
+  def exportFrozenPositions(board: Board): List[String] = List()
+
   def >>(game: Game): String = {
     List(
       exportBoard(game.board) + exportCrazyPocket(game.board),
@@ -191,6 +194,9 @@ object Forsyth {
       game.fullMoveNumber
     ) ::: {
       if (game.board.variant == variant.ThreeCheck) List(exportCheckCount(game.board))
+      else List()
+    } ::: {
+      if (game.board.variant == variant.crazy.Crazyhouse) exportFrozenPositions(game.board)
       else List()
     }
   } mkString " "
@@ -210,8 +216,9 @@ object Forsyth {
 
   private def exportCrazyPocket(board: Board) =
     board.crazyData match {
-      case Some(variant.Crazyhouse.Data(pockets, _,_,_,_,outPos)) =>
-        println(s"Forsyth.exportCrazyData: outPos= $outPos ... crazyData= ${board.crazyData}...")
+      case Some(CrazyhouseData(pockets, a,b,c,d)) =>
+
+        println(s"Forsyth.exportCrazyData:$a \n $b \n $c \n $d  ... crazyData= ${board.crazyData}...")
         "/" +
           pockets.white.roles.map(_.forsythUpper).mkString +
           pockets.black.roles.map(_.forsyth).mkString

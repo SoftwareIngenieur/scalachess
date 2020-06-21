@@ -4,7 +4,6 @@ package variant
 import scala.annotation.nowarn
 import scalaz.Validation.failureNel
 import scalaz.Validation.FlatMap._
-
 import Pos.posAt
 
 // Correctness depends on singletons for each variant ID
@@ -28,7 +27,7 @@ abstract class Variant private[variant] (
   def atomic        = this == Atomic
   def horde         = this == Horde
   def racingKings   = this == RacingKings
-  def crazyhouse    = this == Crazyhouse
+  def crazyhouse    = this ==     chess.variant.crazy.Crazyhouse
 
   def exotic = !standard
 
@@ -205,7 +204,7 @@ object Variant {
 
   val all = List(
     Standard,
-    Crazyhouse,
+    chess.variant.crazy.Crazyhouse,
     Chess960,
     FromPosition,
     KingOfTheHill,
@@ -236,7 +235,7 @@ object Variant {
 
   val openingSensibleVariants: Set[Variant] = Set(
     chess.variant.Standard,
-    chess.variant.Crazyhouse,
+    chess.variant.crazy.Crazyhouse,
     chess.variant.ThreeCheck,
     chess.variant.KingOfTheHill
   )
