@@ -13,17 +13,17 @@ case class LastThreeMoves(b1:Option[Pos],b2:Option[Pos],b3:Option[Pos],w1:Option
 
         false
       } else {
-        println(s"Is this piece frozen? Situation is white. NO. can move from ${tuple._1} (IS VALID)...LastThreeMoves($b1,$b2,$b3,$w1,$w2,$w3")")
+        println(s"Is this piece frozen? Situation is white. NO. can move from ${tuple._1} (IS VALID)...LastThreeMoves($b1,$b2,$b3,$w1,$w2,$w3)")
 
         true
       }
     }else{
       if(b1.exists( _ == tuple._1) || b2.exists( _ == tuple._1) || b3.exists( _ == tuple._1) ) {
-        println(s"Is this piece frozen? Situation is black. Yes can NOT move from ${tuple._1}...LastThreeMoves($b1,$b2,$b3,$w1,$w2,$w3")")
+        println(s"Is this piece frozen? Situation is black. Yes can NOT move from ${tuple._1}...LastThreeMoves($b1,$b2,$b3,$w1,$w2,$w3)")
 
         false
       } else {
-        println(s"Is this piece frozen? Situation is BLACK. NO. can move from ${tuple._1} (IS VALID)...LastThreeMoves($b1,$b2,$b3,$w1,$w2,$w3")")
+        println(s"Is this piece frozen? Situation is BLACK. NO. can move from ${tuple._1} (IS VALID)...LastThreeMoves($b1,$b2,$b3,$w1,$w2,$w3)")
         true
       }
     }
