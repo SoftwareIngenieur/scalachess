@@ -105,7 +105,8 @@ object CrazyhouseData {
   }
   def init(standardPieceMap: PieceMap) = {
 
-    val uniquePieceMap = pieceMapToUnique(standardPieceMap)
+    val uniquePieceMap = pieceMapToUnique(standardPieceMap).updated(UniquePiece(950, Piece(White,Pawn)), Pos.posAt(1,2).get)
+    //mann
 
     CrazyhouseData(Pockets(Pocket(Nil),
       Pocket(Nil)), Set.empty,

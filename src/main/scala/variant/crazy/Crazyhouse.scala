@@ -65,10 +65,10 @@ case object Crazyhouse
 
           val (d3: CrazyhouseData, piece: Option[UniquePiece], somePos : Option[Pos]) = d2 withUniquePieceMapUpdated(orig, dest)
 
-          val d4 = d3
-         // val d4 = d3 withOutedImpersonatorsUpdated(orig, dest, piece, board)
+          val d4 = d3  // withOutedImpersonatorsUpdated(orig, dest, piece, board)
           val d5 = d4 withListOFRecentPiecesMoved(board.history.halfMoveClock, piece, somePos)
-          board withCrazyData d5
+          val d6 = board withCrazyData d5
+          d6 withMannRevieled(orig)
         }
       case _ => //was a drop
         board
