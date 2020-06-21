@@ -43,15 +43,19 @@ override val initialFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR/ w KQkq -
   // In this variant, a player cant move a piece twice in a row
   override def validMoves(situation: Situation): Map[Pos, List[Move]]  = {
     val allMoves       = super.validMoves(situation)
-
     situation.board.crazyData.get.recentTurns(situation.history.halfMoveClock, situation.color) match {
-      case recentTurns: Seq[UniquePiece] =>
+      case recentTurns: Seq[UniquePiece] =>{
+        println("RECENT TURNS" + recentTurns.toSeq.mkString(","))
+
         allMoves.collect{
           case (k : Pos, moves) if
-            !situation.board.crazyData.get. thispiecewasrecentlymoved3(recentTurns, k) =>
-            (k,moves)
+            !situation.board.crazyData.get. thispiecewasrecentlymoved3(recentTurns, k) => {
+            println(s"colkecting $k")
+            (k, moves)
+          }
 
           }
+      }
 
       }
   }
@@ -59,8 +63,8 @@ override val initialFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR/ w KQkq -
     val pieces = board.pieces.values
    val crazyHouseValid = (Color.all forall validSide(board, false) _) &&
       (!strict || (pieces.count(_ is Pawn) <= 16 && pieces.size <= 32))
-    val kageMushaValid = board.crazyData.map(_.listOfTurnsAndUniquPiecesMoved).map(getInvalidTurnsTooSoon(_, board))
-    crazyHouseValid && kageMushaValid.getOrElse(true)
+  //  val kageMushaValid = board.crazyData.map(_.listOfTurnsAndUniquPiecesMoved).map(getInvalidTurnsTooSoon(_, board))
+    crazyHouseValid // && kageMushaValid.getOrElse(true)
 
 
   }
@@ -162,6 +166,7 @@ override val initialFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR/ w KQkq -
                    listOfOutPos: Seq[Pos] = Seq()
                  ) {
     def thispiecewasrecentlymoved3(recentTurns: Seq[UniquePiece], k: Pos): Boolean = {
+      println(s"recent turns: $recentTurns.... $k")
       recentTurns.exists(thispiecewasrecentlymoved(_,k))
     }
 
@@ -264,7 +269,7 @@ def     pieceMapToUnique(standardPieceMap: PieceMap) = {
 }
     def init(standardPieceMap: PieceMap) = {
 
-      Data(Pockets(Pocket(Nil), Pocket(Nil)), Set.empty, pieceMapToUnique(standardPieceMap), Set.empty[UniquePiece], Map(-1 -> None))
+      Data(Pockets(Pocket(Nil), Pocket(Nil)), Set.empty, pieceMapToUnique(standardPieceMap), Set.empty[UniquePiece], Map.empty)
     }
   }
 
