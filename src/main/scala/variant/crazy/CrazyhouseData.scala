@@ -52,7 +52,13 @@ case class CrazyhouseData(
   def withUniquePieceMapUpdated(orig: Pos, dest: Pos): (CrazyhouseData, Option[UniquePiece], Option[Pos]) = {
     val onThatSquare = pieceMap.filter(_._2 == orig)
     val pieceThatMoved = onThatSquare.headOption.map(_._1)
+    pieceThatMoved match {
+      case Some(uniquePiece) if uniquePiece.is(King) && orig == chess.Pos.E1 && dest == chess.Pos.G1 =>
+        println("WE GOT A WHITE KINGSIDE CASTLE")
+      case Some(uniquePiece) if uniquePiece.is(King) || orig == chess.Pos.E1 || dest == chess.Pos.G1 =>
+        println(s"WE ALMOST GOT A WHITE KINGSIDE CASTLE $uniquePiece $orig $dest")
 
+    }
 
     pieceThatMoved match {
       case Some(uniquePiece) if uniquePiece.is(King) && orig == chess.Pos.E1 && dest == chess.Pos.G1 =>
@@ -85,11 +91,15 @@ case class CrazyhouseData(
       copy(pockets = nps)
     }
 
-  def store(piece: Piece, from: Pos) =
+  def store(piece: Piece, from: Pos) = {
+    val theUniquePiece = pieceMap.filter(_._2 == from).head._1
+    require(theUniquePiece.genericPiece == piece)
     copy(
       pockets = pockets store promoted(from).fold(piece.color.pawn, piece),
-      promoted = promoted - from
+      promoted = promoted - from,
+      pieceMap = pieceMap.updated(theUniquePiece, -1 * theUniquePiece.id) // heaven
     )
+  }
 
   def promote(pos: Pos) = copy(promoted = promoted + pos)
 
