@@ -38,10 +38,9 @@ case class CrazyhouseData(
   }
   def withListOFRecentPiecesMoved(halfMoveClock: Int, piece: Option[UniquePiece], somePos: Option[Pos]) = {
     if(halfMoveClock <  30){
-      CrazyhouseData(pockets, promoted, pieceMap, listOfOuts, listOfTurnsAndUniquPiecesMoved.addMove(
-        somePos.getOrElse(throw new IllegalArgumentException(s"Half Move Clock: $halfMoveClock")), piece.getOrElse(
-          throw new IllegalArgumentException(s"Half Move Clock:$halfMoveClock")
-        ).genericPiece.color) )
+
+      CrazyhouseData(pockets, promoted, pieceMap, listOfOuts, listOfTurnsAndUniquPiecesMoved.addAMove(
+        somePos  , piece) )
 
     }else
       CrazyhouseData(pockets, promoted, pieceMap, listOfOuts,LastThreeMoves(None,None,None,None,None,None))
@@ -51,11 +50,20 @@ case class CrazyhouseData(
   }
 
   def withUniquePieceMapUpdated(orig: Pos, dest: Pos): (CrazyhouseData, Option[UniquePiece], Option[Pos]) = {
-
-    val onThatSquare = pieceMap.filter(_._2.piotr == orig.piotr)
+    val onThatSquare = pieceMap.filter(_._2 == orig)
     val pieceThatMoved = onThatSquare.headOption.map(_._1)
 
+
     pieceThatMoved match {
+      case Some(uniquePiece) if uniquePiece.is(King) && orig == chess.Pos.E1 && dest == chess.Pos.G1 =>
+
+        println("WE GOT A WHITE KINGSIDE CASTLE")
+ this.withUniquePieceMapUpdated(chess.Pos.E1, chess.Pos.F1  )._1
+        .withUniquePieceMapUpdated( chess.Pos.F1 ,  chess.Pos.G1 )._1
+        .withListOFRecentPiecesMoved(15, Some(UniquePiece.♔), Some(chess.Pos.G1))
+        .withUniquePieceMapUpdated(chess.Pos.H1,chess.Pos.F1)
+
+
       case Some(uniquePiece) => {
         val mapWithoutPieceThatMoved = pieceMap.removed(uniquePiece)
         val mapWithPieceThatMovedAtNewLocation = mapWithoutPieceThatMoved.updated(uniquePiece, dest)

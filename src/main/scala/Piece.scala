@@ -1,6 +1,13 @@
 package chess
 
+object UniquePiece {
+  def ♔ : UniquePiece =
+    //assuming not a 960 setup (todo)
+    UniquePiece(4, Piece.♔)
+
+}
 case class UniquePiece(id: Int, genericPiece: Piece){
+
   def positionsBetween(orig: Pos, dest: Pos): Set[Pos] = {
 
 
@@ -122,6 +129,8 @@ case class Piece(color: Color, role: Role) {
 }
 
 object Piece {
+  def ♔ = pieceFromUnicode("♔")
+
 
   def pieceFromUnicode(unicode: String): Piece = {
     unicode match {

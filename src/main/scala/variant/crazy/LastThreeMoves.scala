@@ -5,6 +5,26 @@ import chess.{Color, Move, Pos, Situation}
 
 
 case class LastThreeMoves(b1:Option[Pos],b2:Option[Pos],b3:Option[Pos],w1:Option[Pos],w2:Option[Pos],w3:Option[Pos]) {
+  def addAMove(somePos: Option[Pos], piece: Option[UniquePiece]): LastThreeMoves = {
+    (somePos, piece) match {
+      case (Some(pos), Some(piece)) => addMove(pos,piece.genericPiece.color)
+      case (_ , Some(piece)) if piece.genericPiece.color.white =>{
+        println("OY!!! trying to add a move but didnt work. clearing out LastThreeMoves for white and partly for black")
+LastThreeMoves(b1,None,None,None,None,None)
+      }
+      case (_ , Some(piece)) if piece.genericPiece.color.black =>{
+        println("OY!!! trying to add a move but didnt work. clearing out LastThreeMoves for black")
+        LastThreeMoves(None,None,None,w1,None,None)
+
+      }
+
+      case _ => {
+        println("OY!!! trying to add a move but didnt work. clearing out LastThreeMoves for both")
+        LastThreeMoves(None,None,None,None,None,None)
+      }
+    }
+  }
+
   def isValidMove(situation: Situation, tuple: (Pos, List[Move])): Boolean = {
     if(situation.color.white){
       if(w3.isDefined){
@@ -43,13 +63,22 @@ case class LastThreeMoves(b1:Option[Pos],b2:Option[Pos],b3:Option[Pos],w1:Option
       LastThreeMoves(Some(destination),b1,b2,w1,w2,w3)
     }
     if(color.white){
-      if(b3.isDefined) {
-       LastThreeMoves(None, None, None, Some(destination), None, None)
+      if(w3.isDefined) {
+       LastThreeMoves(b1,b2,b3, Some(destination), None, None)
       }else {
         lastThreeMovesIfInCurrentSession
       }
-    }else {
+    }else if(color.black){
+      if(b3.isDefined) {
+        LastThreeMoves(Some(destination), None, None, w1,w2,w3)
+      }else {
+        lastThreeMovesIfInCurrentSession
+      }
+    }
+    else {
+      println("Not white or black???? ERROR")
       lastThreeMovesIfInCurrentSession
+
     }
   }
 }
