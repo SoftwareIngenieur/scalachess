@@ -97,7 +97,7 @@ case class CrazyhouseData(
     copy(
       pockets = pockets store promoted(from).fold(piece.color.pawn, piece),
       promoted = promoted - from,
-      pieceMap = pieceMap.updated(theUniquePiece, -1 * theUniquePiece.id) // heaven
+      pieceMap = pieceMap.removed(theUniquePiece)
     )
   }
 
