@@ -13,14 +13,16 @@ case class Board(
                   variant: Variant,
                   crazyData: Option[CrazyhouseData] = None
                 ) {
+
   def withMannRevieled(position: Pos) = {
-   crazyData.map(_.pieceMap.collect{
-        case  (p,pos: Pos) if  pos.piotr == position.piotr =>
-          p
-      }).getOrElse(Seq.empty).toSeq.headOption match {
-        case Some(theRevealedMann) => Board(pieces.updated(position, theRevealedMann.genericPiece), history, variant, crazyData)
-        case None => this
-      }
+//   crazyData.map(_.pieceMap.collect{
+//        case  (p,pos: Pos) if  pos.piotr == position.piotr =>
+//          p
+//      }).getOrElse(Seq.empty).toSeq.headOption match {
+//        case Some(theRevealedMann) => Board(pieces.updated(position, theRevealedMann.genericPiece), history, variant, crazyData)
+//        case None => this
+//      }
+    this
 
 
 

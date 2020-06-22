@@ -39,12 +39,12 @@ case class CrazyhouseData(
   def withListOFRecentPiecesMoved(halfMoveClock: Int, piece: Option[UniquePiece], somePos: Option[Pos]) = {
     if(halfMoveClock <  30){
       CrazyhouseData(pockets, promoted, pieceMap, listOfOuts, listOfTurnsAndUniquPiecesMoved.addMove(
-        somePos.getOrElse(throw new IllegalArgumentException(s"$halfMoveClock")), piece.getOrElse(
-          throw new IllegalArgumentException(s"$halfMoveClock")
+        somePos.getOrElse(throw new IllegalArgumentException(s"Half Move Clock: $halfMoveClock")), piece.getOrElse(
+          throw new IllegalArgumentException(s"Half Move Clock:$halfMoveClock")
         ).genericPiece.color) )
 
     }else
-    this
+      CrazyhouseData(pockets, promoted, pieceMap, listOfOuts,LastThreeMoves(None,None,None,None,None,None))
   }
   def isOuted(piece: UniquePiece): Boolean = {
     listOfOuts.contains(piece)
