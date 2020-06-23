@@ -52,5 +52,19 @@ object Visual {
     } mkString
   } map { """\s*$""".r.replaceFirstIn(_, "") } mkString "\n"
 
+  def >|(board: Board, marks: Map[Seq[Pos], String]): String = {
+    val markedPoss: Map[Pos, String] = marks.foldLeft(Map[Pos, String]()) {
+      case (marks, (poss, char)) =>
+        marks ++ (poss.toList map { pos =>
+          (pos, char)
+        })
+    }
+    for (y <- 1 to 8 by -1) yield {
+      for (x <- 1 to 8) yield {
+        posAt(x, y) flatMap markedPoss.get getOrElse board(x, y).fold(" ")(_.forsyth.toString)
+      }
+    } mkString
+  } map { """\s*$""".r.replaceFirstIn(_, "") } mkString "\n"
+
   def addNewLines(str: String) = "\n" + str + "\n"
 }
