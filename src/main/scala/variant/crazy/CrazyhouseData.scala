@@ -62,20 +62,31 @@ case class CrazyhouseData(
     pieceThatMoved match {
       case Some(uniquePiece) if uniquePiece.is(King) && orig == chess.Pos.E1 && dest == chess.Pos.H1 =>
         println("WE GOT A WHITE KINGSIDE CASTLE")
-      case Some(uniquePiece) if uniquePiece.is(King) || orig == chess.Pos.E1 || dest == chess.Pos.H1 =>
-        println(s"WE ALMOST GOT A WHITE KINGSIDE CASTLE $uniquePiece $orig $dest")
-case _ => println("")
-    }
-
-    pieceThatMoved match {
-      case Some(uniquePiece) if uniquePiece.is(King) && orig == chess.Pos.E1 && dest == chess.Pos.H1 =>
-
-        println("WE GOT A WHITE KINGSIDE CASTLE")
  this.withUniquePieceMapUpdated(chess.Pos.E1, chess.Pos.F1  )._1
         .withUniquePieceMapUpdated( chess.Pos.F1 ,  chess.Pos.G1 )._1
         .withListOFRecentPiecesMoved(15, Some(UniquePiece.♔), Some(chess.Pos.G1))
         .withUniquePieceMapUpdated(chess.Pos.H1,chess.Pos.F1)
 
+      case Some(uniquePiece) if uniquePiece.is(King) && orig == chess.Pos.E1 && dest == chess.Pos.A1 =>
+        println("WE GOT A WHITE Queenside CASTLE")
+        this.withUniquePieceMapUpdated(chess.Pos.E1, chess.Pos.D1  )._1
+          .withUniquePieceMapUpdated( chess.Pos.D1 ,  chess.Pos.C1 )._1
+          .withListOFRecentPiecesMoved(15, Some(UniquePiece.♔), Some(chess.Pos.C1))
+          .withUniquePieceMapUpdated(chess.Pos.A1,chess.Pos.D1)
+
+      case Some(uniquePiece) if uniquePiece.is(King) && orig == chess.Pos.E8 && dest == chess.Pos.H8 =>
+        println("WE GOT A black KINGSIDE CASTLE")
+        this.withUniquePieceMapUpdated(chess.Pos.E8, chess.Pos.F8  )._1
+          .withUniquePieceMapUpdated( chess.Pos.F8 ,  chess.Pos.G8 )._1
+          .withListOFRecentPiecesMoved(15, Some(UniquePiece.♚), Some(chess.Pos.G8))
+          .withUniquePieceMapUpdated(chess.Pos.H8,chess.Pos.F8)
+
+      case Some(uniquePiece) if uniquePiece.is(King) && orig == chess.Pos.E8 && dest == chess.Pos.A8 =>
+        println("WE GOT A black queenside CASTLE")
+        this.withUniquePieceMapUpdated(chess.Pos.E8, chess.Pos.D8  )._1
+          .withUniquePieceMapUpdated( chess.Pos.D8 ,  chess.Pos.C8 )._1
+          .withListOFRecentPiecesMoved(15, Some(UniquePiece.♚), Some(chess.Pos.C8))
+          .withUniquePieceMapUpdated(chess.Pos.A8,chess.Pos.D8)
 
       case Some(uniquePiece) => {
         val mapWithoutPieceThatMoved = pieceMap.removed(uniquePiece)
