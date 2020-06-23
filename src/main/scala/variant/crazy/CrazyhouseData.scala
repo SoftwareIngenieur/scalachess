@@ -14,11 +14,19 @@ case class CrazyhouseData(
                  listOfOuts: Set[UniquePiece],
                  listOfTurnsAndUniquPiecesMoved: LastThreeMoves
                ) {
-  def visualStuff: Seq[Pos] = {
-    listOfTurnsAndUniquPiecesMoved.w1 match {
-      case Some(pos) => Seq(pos)
-      case None =>Seq()
-    }.
+
+
+  def visualStuff(pieces:PieceMap) = {
+  import  listOfTurnsAndUniquPiecesMoved._
+   def doVisual(o : Option[Pos])  = o match {
+      case Some(position) => Map(position -> pieces.get(position))
+      case None => Map.empty
+    }
+
+    val myMap = doVisual(w1) ++ doVisual(w2) ++ doVisual(w3) ++  doVisual(b1) ++ doVisual(b2) ++ doVisual(b3)
+    myMap.collect{
+      case (value, Some(piece)) => (Seq(value), piece.unicode)
+    } .toMap
   }
 
 

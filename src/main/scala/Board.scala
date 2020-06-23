@@ -195,7 +195,7 @@ case class Board(
 
   def visual = {
     if(variant.crazyhouse) {
-      format.Visual >>| (this, visualStuff(crazyData.get.visualStuff))
+      format.Visual >>| (this, crazyData.get.visualStuff(pieces))
     }
     else
       format.Visual >> this

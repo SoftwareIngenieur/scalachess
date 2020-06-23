@@ -38,8 +38,8 @@ object Visual {
 
   def >>(board: Board): String = >>|(board, Map.empty)
 
-  def >>|(board: Board, marks: Map[Iterable[Pos], Char]): String = {
-    val markedPoss: Map[Pos, Char] = marks.foldLeft(Map[Pos, Char]()) {
+  def >>|(board: Board, marks: Map[Seq[Pos], String]): String = {
+    val markedPoss: Map[Pos, String] = marks.foldLeft(Map[Pos, String]()) {
       case (marks, (poss, char)) =>
         marks ++ (poss.toList map { pos =>
           (pos, char)
@@ -47,7 +47,7 @@ object Visual {
     }
     for (y <- 8 to 1 by -1) yield {
       for (x <- 1 to 8) yield {
-        posAt(x, y) flatMap markedPoss.get getOrElse board(x, y).fold(' ')(_ forsyth)
+        posAt(x, y) flatMap markedPoss.get getOrElse board(x, y).fold(" ")(_.forsyth.toString)
       }
     } mkString
   } map { """\s*$""".r.replaceFirstIn(_, "") } mkString "\n"
