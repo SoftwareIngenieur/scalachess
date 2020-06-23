@@ -193,7 +193,13 @@ case class Board(
 
   def situationOf(color: Color) = Situation(this, color)
 
-  def visual = format.Visual >> this
+  def visual = {
+    if(variant.crazyhouse) {
+      format.Visual >>| (this, visualStuff(crazyData.get.visualStuff))
+    }
+    else
+      format.Visual >> this
+  }
 
   def valid(strict: Boolean) = variant.valid(this, strict)
 

@@ -14,13 +14,12 @@ case class CrazyhouseData(
                  listOfOuts: Set[UniquePiece],
                  listOfTurnsAndUniquPiecesMoved: LastThreeMoves
                ) {
-
-
-
-
-
-
-
+  def visualStuff: Seq[Pos] = {
+    listOfTurnsAndUniquPiecesMoved.w1 match {
+      case Some(pos) => Seq(pos)
+      case None =>Seq()
+    }.
+  }
 
 
   def withOutedImpersonatorsUpdated(orig: Pos, dest: Pos, somePiece: Option[UniquePiece], board: Board): CrazyhouseData = {
@@ -57,7 +56,7 @@ case class CrazyhouseData(
         println("WE GOT A WHITE KINGSIDE CASTLE")
       case Some(uniquePiece) if uniquePiece.is(King) || orig == chess.Pos.E1 || dest == chess.Pos.G1 =>
         println(s"WE ALMOST GOT A WHITE KINGSIDE CASTLE $uniquePiece $orig $dest")
-
+case _ => println("")
     }
 
     pieceThatMoved match {
