@@ -60,15 +60,15 @@ case class CrazyhouseData(
     val onThatSquare = pieceMap.filter(_._2 == orig)
     val pieceThatMoved = onThatSquare.headOption.map(_._1)
     pieceThatMoved match {
-      case Some(uniquePiece) if uniquePiece.is(King) && orig == chess.Pos.E1 && dest == chess.Pos.G1 =>
+      case Some(uniquePiece) if uniquePiece.is(King) && orig == chess.Pos.E1 && dest == chess.Pos.H1 =>
         println("WE GOT A WHITE KINGSIDE CASTLE")
-      case Some(uniquePiece) if uniquePiece.is(King) || orig == chess.Pos.E1 || dest == chess.Pos.G1 =>
+      case Some(uniquePiece) if uniquePiece.is(King) || orig == chess.Pos.E1 || dest == chess.Pos.H1 =>
         println(s"WE ALMOST GOT A WHITE KINGSIDE CASTLE $uniquePiece $orig $dest")
 case _ => println("")
     }
 
     pieceThatMoved match {
-      case Some(uniquePiece) if uniquePiece.is(King) && orig == chess.Pos.E1 && dest == chess.Pos.G1 =>
+      case Some(uniquePiece) if uniquePiece.is(King) && orig == chess.Pos.E1 && dest == chess.Pos.H1 =>
 
         println("WE GOT A WHITE KINGSIDE CASTLE")
  this.withUniquePieceMapUpdated(chess.Pos.E1, chess.Pos.F1  )._1
