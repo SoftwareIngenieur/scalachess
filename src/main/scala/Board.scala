@@ -14,7 +14,8 @@ case class Board(
                   crazyData: Option[CrazyhouseData] = None
                 ) {
 
-  def withMannRevieled(position: Pos) = {
+  def withMannRevieled(position: Pos, color: Color) = {
+    Board(pieces.updated(position, Piece(color, Queen)), history, variant, crazyData.map(_.withMannReveild(position: Pos, color: Color, history.halfMoveClock + 3000)))
 //   crazyData.map(_.pieceMap.collect{
 //        case  (p,pos: Pos) if  pos.piotr == position.piotr =>
 //          p
