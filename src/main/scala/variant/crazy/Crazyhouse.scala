@@ -69,8 +69,9 @@ case object Crazyhouse
           val d5 = d4 withListOFRecentPiecesMoved(board.history.halfMoveClock, piece, somePos, capture.isDefined,Some(orig))
           val d6 = board withCrazyData d5
           println(d6.visual )
-          d6 withMannRevieled(orig, piece.map(_.genericPiece.color).getOrElse(White))
-
+          val d7 = d6 withMannRevieled(orig, piece.map(_.genericPiece.color).getOrElse(White))
+          println(d7.visual )
+          d7
         }
       case _ => //was a drop
         board
