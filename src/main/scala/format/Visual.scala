@@ -59,7 +59,7 @@ object Visual {
           (pos, char)
         })
     }
-    for (y <- 1 to 8 by -1) yield {
+    for (y <- 1 to 8 by 1) yield {
       for (x <- 1 to 8) yield {
         posAt(x, y) flatMap markedPoss.get getOrElse board(x, y).fold(" ")(_.forsyth.toString)
       }
