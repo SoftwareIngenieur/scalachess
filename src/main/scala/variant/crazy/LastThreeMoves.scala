@@ -12,7 +12,7 @@ case class LastThreeMoves(b1:Option[Pos],b2:Option[Pos],b3:Option[Pos],w1:Option
       println(s"Num pawn positions: $numberOfPositionsoriginToDestinationInclusive .. 2 if moved one, 3 if hopped")
       numberOfPositionsoriginToDestinationInclusive == 3
     }
-    case None => false
+    case _ => false
   }
 
   def occupied(b1: Option[Pos]): Option[Pos] = b1 match {
