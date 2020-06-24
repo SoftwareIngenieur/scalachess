@@ -16,7 +16,7 @@ case class LastThreeMoves(b1:Option[Pos],b2:Option[Pos],b3:Option[Pos],w1:Option
   }
 
   def occupied(b1: Option[Pos]): Option[Pos] = b1 match {
-    case Some(value) => Some(value.x+ 9,value.y+ 9, ' '))
+    case Some(value) => Some(Pos(value.x+ 9 , value.y+ 9, ' '))
     case None =>None
   }
 
