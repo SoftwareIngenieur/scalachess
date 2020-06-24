@@ -198,7 +198,7 @@ case class Board(
 
       format.Visual.>>| (this, crazyData.get.visualStuff(pieces)) +
       s"number of turns white until next time-term: " + crazyData.get.listOfTurnsAndUniquPiecesMoved.numWhiteLeftTillTimeTerm +
-        "\n How about black? " + crazyData.get.listOfTurnsAndUniquPiecesMoved.numBlackLeftTillTimeTerm
+        "\n How about black? " + crazyData.get.listOfTurnsAndUniquPiecesMoved.numBlackLeftTillTimeTerm +
       "\n\n\n" + format.Visual.>|(this, crazyData.get.visualStuff(pieces))
 
     }
