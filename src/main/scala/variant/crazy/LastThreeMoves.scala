@@ -7,7 +7,7 @@ import chess.{Color, Move, Pos, Situation}
 case class LastThreeMoves(b1:Option[Pos],b2:Option[Pos],b3:Option[Pos],w1:Option[Pos],w2:Option[Pos],w3:Option[Pos]) {
   def numBlackLeftTillTimeTerm: String = {
     if (b1.isEmpty){
-      "3 ... them then you then them then you then them then you then them then you can move anything
+      "3 ... them then you then them then you then them then you then them then you can move anything"
     } else if (b2.isEmpty){
       "2... you just moved the first in a time term . next move then a third and then you move whatever "
     }
@@ -20,7 +20,7 @@ case class LastThreeMoves(b1:Option[Pos],b2:Option[Pos],b3:Option[Pos],w1:Option
 
   def numWhiteLeftTillTimeTerm: String = {
     if (w1.isEmpty){
-      "3 ... them then you then them then you then them then you then them then you can move anything
+      "3 ... them then you then them then you then them then you then them then you can move anything"
     } else if (w2.isEmpty){
       "2... you just moved the first in a time term . next move then a third and then you move whatever "
     }
