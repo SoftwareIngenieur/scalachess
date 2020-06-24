@@ -7,7 +7,6 @@ sealed case class Pos private (x: Int, y: Int, piotr: Char) {
 
 
   import Pos.posAt
-
   val down: Option[Pos] = posAt(x, y - 1)
   val left: Option[Pos] = posAt(x - 1, y)
   val downLeft: Option[Pos] = posAt(x - 1, y - 1)

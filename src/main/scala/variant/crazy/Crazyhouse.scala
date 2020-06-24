@@ -66,7 +66,7 @@ case object Crazyhouse
           val (d3: CrazyhouseData, piece: Option[UniquePiece], somePos : Option[Pos]) = d2 withUniquePieceMapUpdated(orig, dest)
 
           val d4 = d3  // withOutedImpersonatorsUpdated(orig, dest, piece, board)
-          val d5 = d4 withListOFRecentPiecesMoved(board.history.halfMoveClock, piece, somePos)
+          val d5 = d4 withListOFRecentPiecesMoved(board.history.halfMoveClock, piece, somePos, capture.isDefined,Some(orig))
           val d6 = board withCrazyData d5
           println(d6.visual)
           d6 withMannRevieled(orig)

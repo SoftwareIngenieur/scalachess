@@ -43,14 +43,18 @@ case class CrazyhouseData(
       case None => this
     }
   }
-  def withListOFRecentPiecesMoved(halfMoveClock: Int, piece: Option[UniquePiece], somePos: Option[Pos]) = {
-    if(halfMoveClock <  30){
+  def withListOFRecentPiecesMoved(halfMoveClock: Int, piece: Option[UniquePiece], somePos: Option[Pos], resetDueToCapture: Boolean = false, pawnOrigin: Option[Pos] = None) = {
 
-      CrazyhouseData(pockets, promoted, pieceMap, listOfOuts, listOfTurnsAndUniquPiecesMoved.addAMove(
-        somePos  , piece) )
+if(resetDueToCapture) {
+  println("Resetting due to capture")
+  CrazyhouseData(pockets, promoted, pieceMap, listOfOuts,LastThreeMoves(None,None,None,None,None,None))
+}else
+{
+  println("Was not a capture, adding a move as usual")
 
-    }else
-      CrazyhouseData(pockets, promoted, pieceMap, listOfOuts,LastThreeMoves(None,None,None,None,None,None))
+  CrazyhouseData(pockets, promoted, pieceMap, listOfOuts, listOfTurnsAndUniquPiecesMoved.addAMove(
+        somePos  , piece, pawnOrigin) )
+}
   }
   def isOuted(piece: UniquePiece): Boolean = {
     listOfOuts.contains(piece)
@@ -60,6 +64,10 @@ case class CrazyhouseData(
     val onThatSquare = pieceMap.filter(_._2 == orig)
     val pieceThatMoved = onThatSquare.headOption.map(_._1)
     pieceThatMoved match {
+      //case Some(uniquePiece) if uniquePiece.is(Pawn) && orig.up.get.up.get == dest =>
+       // this.withUniquePieceMapUpdated(orig, orig.up .get)._1
+        //  .withListOFRecentPiecesMoved(15, Some(UniquePiece.♔), Some())
+         // .withUniquePieceMapUpdated(orig.up.get, dest)._1
       case Some(uniquePiece) if uniquePiece.is(King) && orig == chess.Pos.E1 && dest == chess.Pos.H1 =>
         println("WE GOT A WHITE KINGSIDE CASTLE")
  this.withUniquePieceMapUpdated(chess.Pos.E1, chess.Pos.F1  )._1
