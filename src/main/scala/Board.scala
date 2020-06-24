@@ -196,7 +196,10 @@ case class Board(
   def visual = {
     if(variant.crazyhouse) {
 
-      format.Visual.>>| (this, crazyData.get.visualStuff(pieces)) + "\n\n\n" + format.Visual.>|(this, crazyData.get.visualStuff(pieces))
+      format.Visual.>>| (this, crazyData.get.visualStuff(pieces)) +
+      s"number of turns white until next time-term: " + crazyData.get.listOfTurnsAndUniquPiecesMoved.numWhiteLeftTillTimeTerm +
+        "\n How about black? " + crazyData.get.listOfTurnsAndUniquPiecesMoved.numBlackLeftTillTimeTerm
+      "\n\n\n" + format.Visual.>|(this, crazyData.get.visualStuff(pieces))
 
     }
     else

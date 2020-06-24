@@ -5,6 +5,32 @@ import chess.{Color, Move, Pos, Situation}
 
 
 case class LastThreeMoves(b1:Option[Pos],b2:Option[Pos],b3:Option[Pos],w1:Option[Pos],w2:Option[Pos],w3:Option[Pos]) {
+  def numBlackLeftTillTimeTerm: String = {
+    if (b1.isEmpty){
+      "3 ... them then you then them then you then them then you then them then you can move anything
+    } else if (b2.isEmpty){
+      "2... you just moved the first in a time term . next move then a third and then you move whatever "
+    }
+    else if (b3.isEmpty){
+      "1 .. one more move and then your next move is fully free"
+    } else {
+      "0 you just made third move.  once they go you can do whatever you want"
+    }
+  }
+
+  def numWhiteLeftTillTimeTerm: String = {
+    if (w1.isEmpty){
+      "3 ... them then you then them then you then them then you then them then you can move anything
+    } else if (w2.isEmpty){
+      "2... you just moved the first in a time term . next move then a third and then you move whatever "
+    }
+    else if (w3.isEmpty){
+      "1 .. one more move and then your next move is fully free"
+    } else {
+      "0 you just made third move.  once they go you can do whatever you want"
+    }
+  }
+
 
   def isPawnHop(piece: UniquePiece, pos: Pos, originIfPawn: Option[Pos]) = originIfPawn match {
     case Some(origin) if piece.is(Pawn) =>{
@@ -103,7 +129,8 @@ LastThreeMoves(b1,None,None,None,None,None)
       }
     }
   }
-  def addMove(destination: Pos, color: Color) ={
+
+  def addMove(destination: Pos, color: Color, withQueing: Boolean = false) ={
     val lastThreeMovesIfInCurrentSession = if(color.white){
       LastThreeMoves(b1,b2,b3,Some(destination),w1,w2)
     }
@@ -111,13 +138,13 @@ LastThreeMoves(b1,None,None,None,None,None)
       LastThreeMoves(Some(destination),b1,b2,w1,w2,w3)
     }
     if(color.white){
-      if(w3.isDefined) {
+      if(w3.isDefined && !withQueing) {
        LastThreeMoves(b1,b2,b3, Some(destination), None, None)
       }else {
         lastThreeMovesIfInCurrentSession
       }
     }else if(color.black){
-      if(b3.isDefined) {
+      if(b3.isDefined  && !withQueing) {
         LastThreeMoves(Some(destination), None, None, w1,w2,w3)
       }else {
         lastThreeMovesIfInCurrentSession
