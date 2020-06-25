@@ -17,6 +17,11 @@ case class CrazyhouseData(
   def withMannReveild(position: Pos, color: Color, id: Int): CrazyhouseData = {
     CrazyhouseData(pockets,promoted,pieceMap.updated(UniquePiece(id, Piece(color, Queen)), position ), listOfOuts, listOfTurnsAndUniquPiecesMoved)
   }
+  def getUPFromPos(p: Pos) = {
+    val onThatSquare = pieceMap.filter(_._2 == p)
+    val pieceThatMoved = onThatSquare.headOption.map(_._1)
+    pieceThatMoved
+  }
 
 
   def visualStuff(pieces:PieceMap) = {

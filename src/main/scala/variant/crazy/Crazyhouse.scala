@@ -22,16 +22,32 @@ case object Crazyhouse
   def getInvalidTurnsTooSoon(listOfTurnsAndUniquPiecesMoved:  Map[Int, Option[UniquePiece]], board: Board): Boolean = {
     true
   }
+
+  def isMannMove(move: Move): Boolean = {
+
+    move.orig.touches(move.dest) &&
+      (move.orig.down != move.dest
+        || move.orig.downLeft != move.dest )
+
+  }
+
   // In this variant, a player cant move a piece twice in a row
   override def validMoves(situation: Situation): Map[Pos, List[Move]]  = {
     val allMoves       = super.validMoves(situation)
-    if(situation.board.history.halfMoveClock < 30) {
+
       allMoves.filter {
         case (pos, listOfMoves) => situation.board.crazyData.get.listOfTurnsAndUniquPiecesMoved.isValidMove(situation, (pos, listOfMoves))
+      } .filter {
+        case (pos, listOfMoves) =>  {
+          val idOfMann = situation.board.crazyData.get.getUPFromPos(pos).map(_.id).get
+          if(idOfMann> 3000 && idOfMann < 2050 ){
+            (pos, listOfMoves.filter(isMannMove(_)))
+          }
+          else
+            (pos, listOfMoves)
+        }
       }
-    }else{
-      allMoves
-    }
+
   }
   override def valid(board: Board, strict: Boolean) = {
     val pieces = board.pieces.values
