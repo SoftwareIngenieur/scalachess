@@ -20,6 +20,8 @@ case class UniquePiece(id: Int, genericPiece: Piece){
       case Bishop => straightBetween(orig, dest) //from onSameDiagonal to
       case Knight => Set(dest) //todo
       case Pawn => straightBetween(orig, dest) //Piece.pawnEyes(color, from, to)
+      case Mann => Set(dest)//Piece.pawnEyes(color, from, to)
+
     }
   }
 
