@@ -71,6 +71,7 @@ final case class Actor(
       case Knight => shortRange(Knight.dirs)
 
       case Rook => longRange(Rook.dirs)
+      case Mann => longRange(Mann.dirs)
 
       case Queen => longRange(Queen.dirs)
 
