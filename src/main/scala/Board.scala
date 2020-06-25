@@ -16,9 +16,9 @@ case class Board(
 
   def withMannRevieled(position: Pos, color: Color) = {
     if(position == Pos.E1 ){
-      Board(pieces.updated(position, Piece(color, Mann)), history, variant, crazyData.map(_.withMannReveild(position: Pos, color: Color, history.halfMoveClock + 3000)))
+      Board(pieces.updated(position, Piece(color, Queen)), history, variant, crazyData.map(_.withMannReveild(position: Pos, color: Color, history.halfMoveClock + 3000)))
     }else if (position == Pos.E8){
-      Board(pieces.updated(position, Piece(color, Mann)), history, variant, crazyData.map(_.withMannReveild(position: Pos, color: Color, history.halfMoveClock + 3000)))
+      Board(pieces.updated(position, Piece(color, Queen)), history, variant, crazyData.map(_.withMannReveild(position: Pos, color: Color, history.halfMoveClock + 3000)))
     }else{
       this
     }

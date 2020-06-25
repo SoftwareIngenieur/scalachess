@@ -15,7 +15,7 @@ case class CrazyhouseData(
                  listOfTurnsAndUniquPiecesMoved: LastThreeMoves
                ) {
   def withMannReveild(position: Pos, color: Color, id: Int): CrazyhouseData = {
-    CrazyhouseData(pockets,promoted,pieceMap.updated(UniquePiece(id, Piece(color, Mann)), position ), listOfOuts, listOfTurnsAndUniquPiecesMoved)
+    CrazyhouseData(pockets,promoted,pieceMap.updated(UniquePiece(id, Piece(color, Queen)), position ), listOfOuts, listOfTurnsAndUniquPiecesMoved)
   }
 
 

@@ -22,12 +22,7 @@ case object King extends PromotableRole {
   def dir(from: Pos, to: Pos) = None
   val projection              = false
 }
-case object Mann extends PromotableRole {
-  val forsyth                 = 'm'
-  val dirs: Directions        =  Rook.dirs :::  Bishop.dirs
-  def dir(from: Pos, to: Pos) = Rook.dir(from, to) orElse Bishop.dir(from, to)
-  val projection              = true
-}
+
 
 case object Queen extends PromotableRole {
   val forsyth                 = 'q'

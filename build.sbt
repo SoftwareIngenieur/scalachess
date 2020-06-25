@@ -8,7 +8,7 @@ scalaVersion := "2.13.2"
 
 libraryDependencies ++= List(
   "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2",
-  "org.scalaz"             %% "scalaz-core"              % "7.2.30",
+  "org.scalaz"             %% "scalaz-core"              % "7.2.31",
   "org.specs2"             %% "specs2-core"              % "4.7.0" % "test",
   "org.specs2"             %% "specs2-scalaz"            % "4.7.0" % "test",
   "com.github.ornicar"     %% "scalalib"                 % "6.8",
