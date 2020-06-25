@@ -37,7 +37,7 @@ case object Crazyhouse
 
       allMoves.filter {
         case (pos, listOfMoves) => situation.board.crazyData.get.listOfTurnsAndUniquPiecesMoved.isValidMove(situation, (pos, listOfMoves))
-      } .filter {
+      } .collect {
         case (pos, listOfMoves) =>  {
           val idOfMann = situation.board.crazyData.get.getUPFromPos(pos).map(_.id).get
           if(idOfMann> 3000 && idOfMann < 2050 ){
@@ -46,7 +46,7 @@ case object Crazyhouse
           else
             (pos, listOfMoves)
         }
-      }
+      }.toMap
 
   }
   override def valid(board: Board, strict: Boolean) = {
