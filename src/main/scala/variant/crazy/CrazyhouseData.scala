@@ -39,8 +39,7 @@ case class CrazyhouseData(
       // } else {
       //    this
       //  }
-
-      case None => this
+case _ => this
     }
   }
   def withListOFRecentPiecesMoved(halfMoveClock: Int, piece: Option[UniquePiece], somePos: Option[Pos], resetDueToCapture: Boolean = false, pawnOrigin: Option[Pos] = None) = {
