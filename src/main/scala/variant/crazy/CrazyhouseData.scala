@@ -66,7 +66,7 @@ if(resetDueToCapture) {
     pieceThatMoved
   }
 
-  private def withUniquePieceMapUpdated(orig: Pos, dest: Pos): (CrazyhouseData, Option[UniquePiece], Option[Pos]) = {
+   def withUniquePieceMapUpdated(orig: Pos, dest: Pos): (CrazyhouseData, Option[UniquePiece], Option[Pos]) = {
 
     uniquePieceAtPos(orig) match {
       //case Some(uniquePiece) if uniquePiece.is(Pawn) && orig.up.get.up.get == dest =>
