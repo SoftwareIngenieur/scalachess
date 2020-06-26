@@ -35,8 +35,8 @@ case object Crazyhouse
   override def validMoves(situation: Situation): Map[Pos, List[Move]]  =
     super.validMoves(situation).collect {
         case (pos, listOfMoves) if situation.board.crazyData.get.listOfTurnsAndUniquPiecesMoved.isValidMove(situation, (pos, listOfMoves)) =>
-        filterMovesAlreadyMoved(pos,listOfMoves)
-        case (pos, listOfMoves) => (pos, listOfMoves)
+          (pos, listOfMoves)
+        case (pos, listOfMoves) =>   filterMovesAlreadyMoved(pos,listOfMoves)
       }.toMap
 
 
