@@ -100,9 +100,15 @@ LastThreeMoves(b1,None,None,None,None,None)
   }
 
   def isValidMove(situation: Situation, tuple: (Pos, List[Move])): Boolean = {
-    if(situation.color.white){
+    if(situation.kingPos.map(_ == tuple._1 ).getOrElse(false)){
+      true
+    }
+    else if(situation.color.white){
       if(w3.isDefined){
-        println(s"Is this piece frozen? Situation is white. NO. can move from ${tuple._1} (IS VALID)...LastThreeMoves($b1,$b2,$b3,$w1,$w2,$w3)")
+        println(s"Is this piece frozen? " +
+          s"Situation is white. " +
+          s"NOT FROZEN. " +
+          s"Can move from ${tuple._1} (IS VALID)...LastThreeMoves($b1,$b2,$b3,$w1,$w2,$w3)")
 
         true
       }else if(w1.exists( _ == tuple._1) || w2.exists( _ == tuple._1) )  {

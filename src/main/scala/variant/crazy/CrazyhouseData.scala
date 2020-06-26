@@ -4,15 +4,15 @@ package variant.crazy
 import chess.variant.crazy.Crazyhouse.storableRoles
 
 case class CrazyhouseData(
-                 pockets: Pockets,
-                 // in crazyhouse, a promoted piece becomes a pawn
-                 // when captured and put in the pocket.
-                 // there we need to remember which pieces are issued from promotions.
-                 // we do that by tracking their positions on the board.
-                 promoted: Set[Pos],
-                 pieceMap: UniquePieceMap,
-                 listOfOuts: Set[UniquePiece],
-                 listOfTurnsAndUniquPiecesMoved: LastThreeMoves
+                           pockets: Pockets,
+                           // in crazyhouse, a promoted piece becomes a pawn
+                           // when captured and put in the pocket.
+                           // there we need to remember which pieces are issued from promotions.
+                           // we do that by tracking their positions on the board.
+                           promoted: Set[Pos],
+                           pieceMap: UniquePieceMap,
+                           politicalDecoys: Set[UniquePiece],
+                           listOfTurnsAndUniquPiecesMoved: LastThreeMoves
                ) {
 
 
@@ -33,9 +33,9 @@ case class CrazyhouseData(
   def withOutedImpersonatorsUpdated(orig: Pos, dest: Pos, somePiece: Option[UniquePiece], board: Board): CrazyhouseData = {
     println(s"withOutedImpersonatorsUpdated: somePiece: $somePiece")
     somePiece match {
-      case Some(piece) if !isOuted(piece) && piece.isMinor =>
+      case Some(piece) if politicalDecoys.contains(piece) && isOuted(piece) && piece.isMinor =>
         // if (piece.positionsBetween(orig, dest).toSeq.forall(p => pieceThreatened(board, !piece.genericPiece.color, p))) {
-        CrazyhouseData(pockets, promoted, this.pieceMap, listOfOuts + piece, this.listOfTurnsAndUniquPiecesMoved)
+        CrazyhouseData(pockets, promoted, this.pieceMap, politicalDecoys - piece, this.listOfTurnsAndUniquPiecesMoved)
       // } else {
       //    this
       //  }
@@ -47,23 +47,28 @@ case class CrazyhouseData(
 
 if(resetDueToCapture) {
   println("Resetting due to capture")
-  CrazyhouseData(pockets, promoted, pieceMap, listOfOuts,LastThreeMoves(None,None,None,None,None,None))
+  CrazyhouseData(pockets, promoted, pieceMap, politicalDecoys,LastThreeMoves(somePos,None,None,somePos,None,None))
 }else
 {
   println("Was not a capture, adding a move as usual")
 
-  CrazyhouseData(pockets, promoted, pieceMap, listOfOuts, listOfTurnsAndUniquPiecesMoved.addAMove(
+  CrazyhouseData(pockets, promoted, pieceMap, politicalDecoys, listOfTurnsAndUniquPiecesMoved.addAMove(
         somePos  , piece, pawnOrigin) )
 }
   }
   def isOuted(piece: UniquePiece): Boolean = {
-    listOfOuts.contains(piece)
+    !politicalDecoys.contains(piece)
   }
 
-  def withUniquePieceMapUpdated(orig: Pos, dest: Pos): (CrazyhouseData, Option[UniquePiece], Option[Pos]) = {
+  def uniquePieceAtPos(orig: Pos) = {
     val onThatSquare = pieceMap.filter(_._2 == orig)
     val pieceThatMoved = onThatSquare.headOption.map(_._1)
-    pieceThatMoved match {
+    pieceThatMoved
+  }
+
+  private def withUniquePieceMapUpdated(orig: Pos, dest: Pos): (CrazyhouseData, Option[UniquePiece], Option[Pos]) = {
+
+    uniquePieceAtPos(orig) match {
       //case Some(uniquePiece) if uniquePiece.is(Pawn) && orig.up.get.up.get == dest =>
        // this.withUniquePieceMapUpdated(orig, orig.up .get)._1
         //  .withListOFRecentPiecesMoved(15, Some(UniquePiece.♔), Some())
@@ -100,7 +105,7 @@ if(resetDueToCapture) {
         val mapWithoutPieceThatMoved = pieceMap.removed(uniquePiece)
         val mapWithPieceThatMovedAtNewLocation = mapWithoutPieceThatMoved.updated(uniquePiece, dest)
 
-        (CrazyhouseData(pockets, promoted, mapWithPieceThatMovedAtNewLocation, listOfOuts, this.listOfTurnsAndUniquPiecesMoved), Some(uniquePiece), Some(dest))
+        (CrazyhouseData(pockets, promoted, mapWithPieceThatMovedAtNewLocation, politicalDecoys, this.listOfTurnsAndUniquPiecesMoved), Some(uniquePiece), Some(dest))
       }
       case None => {
         println(s"ERROR: withUniquePieceMapUpdated is failing... $orig $dest ")
@@ -155,7 +160,7 @@ object CrazyhouseData {
     CrazyhouseData(Pockets(Pocket(Nil),
       Pocket(Nil)), Set.empty,
       uniquePieceMap,
-      Set.empty[UniquePiece],
+      Set.empty[UniquePiece] ,
       LastThreeMoves(None,None,None,None,None,None))
   }
 }

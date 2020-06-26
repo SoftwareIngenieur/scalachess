@@ -19,7 +19,7 @@ case object Chess960
   def positionNumber(fen: String): Option[Int] =
     positionsMap.get(fen.takeWhile('/' !=))
 
-  private val positions = Array(
+   val positions = Array(
     "bbqnnrkr",
     "bqnbnrkr",
     "bqnnrbkr",

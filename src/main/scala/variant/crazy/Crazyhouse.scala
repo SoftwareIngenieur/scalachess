@@ -2,7 +2,8 @@ package chess
 package variant.crazy
 
 import chess.format.Uci
-import chess.variant.{Standard, Variant}
+import chess.variant.Chess960.{positions, positionsMap}
+import chess.variant.{Chess960, Standard, Variant}
 import chess.{Bishop, Board, Color, Direction, Drop, History, Knight, Move, Pawn, Piece, PieceMap, Pos, Queen, Role, Rook, Situation, UniquePiece, UniquePieceMap, Valid}
 import scalaz.Validation.failureNel
 
@@ -17,22 +18,22 @@ case object Crazyhouse
     ) {
 //this is going to have chess960 placement
   override val initialFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR/ w KQkq - 0 1"
-  def pieces = Standard.pieces
+  private val positions = Chess960.positions
+  def pieces =
+    Variant.symmetricRank {
+      positions(scala.util.Random.nextInt(960)) flatMap Role.allByForsyth.get
+    }
+  private val positionsMap: Map[String, Int] = positions.zipWithIndex.toMap
+  def positionNumber(fen: String): Option[Int] =
+    positionsMap.get(fen.takeWhile('/' !=))
 
-  def getInvalidTurnsTooSoon(listOfTurnsAndUniquPiecesMoved:  Map[Int, Option[UniquePiece]], board: Board): Boolean = {
-    true
-  }
   // In this variant, a player cant move a piece twice in a row
-  override def validMoves(situation: Situation): Map[Pos, List[Move]]  = {
-    val allMoves       = super.validMoves(situation)
-    if(situation.board.history.halfMoveClock < 30) {
-      allMoves.filter {
+  override def validMoves(situation: Situation): Map[Pos, List[Move]]  =
+    super.validMoves(situation).filter {
         case (pos, listOfMoves) => situation.board.crazyData.get.listOfTurnsAndUniquPiecesMoved.isValidMove(situation, (pos, listOfMoves))
       }
-    }else{
-      allMoves
-    }
-  }
+
+
   override def valid(board: Board, strict: Boolean) = {
     val pieces = board.pieces.values
    val crazyHouseValid = (Color.all forall validSide(board, false) _) &&
