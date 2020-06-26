@@ -17,7 +17,7 @@ case object Crazyhouse
       standardInitialPosition = true
     ) {
 //this is going to have chess960 placement
-  override val initialFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR/ w KQkq - 0 1"
+  //override val initialFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR/ w KQkq - 0 1"
   private val positions = Chess960.positions
   def pieces =
     Variant.symmetricRank {
