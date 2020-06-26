@@ -11,7 +11,7 @@ case class CrazyhouseData(
                            // we do that by tracking their positions on the board.
                            promoted: Set[Pos],
                            pieceMap: UniquePieceMap,
-                           politicalDecoys: Set[UniquePiece],
+                           listOfOuts: Set[UniquePiece],
                            listOfTurnsAndUniquPiecesMoved: LastThreeMoves
                ) {
 
@@ -33,9 +33,9 @@ case class CrazyhouseData(
   def withOutedImpersonatorsUpdated(orig: Pos, dest: Pos, somePiece: Option[UniquePiece], board: Board): CrazyhouseData = {
     println(s"withOutedImpersonatorsUpdated: somePiece: $somePiece")
     somePiece match {
-      case Some(piece) if politicalDecoys.contains(piece) && isOuted(piece) && piece.isMinor =>
+      case Some(piece) if listOfOuts.contains(piece) && isOuted(piece) && piece.isMinor =>
         // if (piece.positionsBetween(orig, dest).toSeq.forall(p => pieceThreatened(board, !piece.genericPiece.color, p))) {
-        CrazyhouseData(pockets, promoted, this.pieceMap, politicalDecoys - piece, this.listOfTurnsAndUniquPiecesMoved)
+        CrazyhouseData(pockets, promoted, this.pieceMap, listOfOuts - piece, this.listOfTurnsAndUniquPiecesMoved)
       // } else {
       //    this
       //  }
@@ -47,17 +47,17 @@ case class CrazyhouseData(
 
 if(resetDueToCapture) {
   println("Resetting due to capture")
-  CrazyhouseData(pockets, promoted, pieceMap, politicalDecoys,LastThreeMoves(somePos,None,None,somePos,None,None))
+  CrazyhouseData(pockets, promoted, pieceMap, listOfOuts,LastThreeMoves(somePos,None,None,somePos,None,None))
 }else
 {
   println("Was not a capture, adding a move as usual")
 
-  CrazyhouseData(pockets, promoted, pieceMap, politicalDecoys, listOfTurnsAndUniquPiecesMoved.addAMove(
+  CrazyhouseData(pockets, promoted, pieceMap, listOfOuts, listOfTurnsAndUniquPiecesMoved.addAMove(
         somePos  , piece, pawnOrigin) )
 }
   }
   def isOuted(piece: UniquePiece): Boolean = {
-    !politicalDecoys.contains(piece)
+    !listOfOuts.contains(piece)
   }
 
   def uniquePieceAtPos(orig: Pos) = {
@@ -105,7 +105,7 @@ if(resetDueToCapture) {
         val mapWithoutPieceThatMoved = pieceMap.removed(uniquePiece)
         val mapWithPieceThatMovedAtNewLocation = mapWithoutPieceThatMoved.updated(uniquePiece, dest)
 
-        (CrazyhouseData(pockets, promoted, mapWithPieceThatMovedAtNewLocation, politicalDecoys, this.listOfTurnsAndUniquPiecesMoved), Some(uniquePiece), Some(dest))
+        (CrazyhouseData(pockets, promoted, mapWithPieceThatMovedAtNewLocation, listOfOuts, this.listOfTurnsAndUniquPiecesMoved), Some(uniquePiece), Some(dest))
       }
       case None => {
         println(s"ERROR: withUniquePieceMapUpdated is failing... $orig $dest ")
