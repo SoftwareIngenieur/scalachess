@@ -18,14 +18,14 @@ case object Crazyhouse
     ) {
 //this is going to have chess960 placement
   //override val initialFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR/ w KQkq - 0 1"
-  private val positions = Chess960.positions
-  def pieces =
-    Variant.symmetricRank {
-      positions(scala.util.Random.nextInt(960)) flatMap Role.allByForsyth.get
-    }
-  private val positionsMap: Map[String, Int] = positions.zipWithIndex.toMap
-  def positionNumber(fen: String): Option[Int] =
-    positionsMap.get(fen.takeWhile('/' !=))
+//  private val positions = Chess960.positions
+//  def pieces =
+//    Variant.symmetricRank {
+//      positions(scala.util.Random.nextInt(960)) flatMap Role.allByForsyth.get
+//    }
+//  private val positionsMap: Map[String, Int] = positions.zipWithIndex.toMap
+//  def positionNumber(fen: String): Option[Int] =
+//    positionsMap.get(fen.takeWhile('/' !=))
 
   // In this variant, a player cant move a piece twice in a row
   override def validMoves(situation: Situation): Map[Pos, List[Move]]  =
