@@ -3,6 +3,7 @@ package variant.crazy
 
 import chess.format.Uci
 import chess.variant.Chess960.{positions, positionsMap}
+import chess.variant.Standard.backRank
 import chess.variant.{Chess960, Standard, Variant}
 import chess.{Bishop, Board, Color, Direction, Drop, History, Knight, Move, Pawn, Piece, PieceMap, Pos, Queen, Role, Rook, Situation, UniquePiece, UniquePieceMap, Valid}
 import scalaz.Validation.failureNel
@@ -17,12 +18,11 @@ case object Crazyhouse
       standardInitialPosition = true
     ) {
 //this is going to have chess960 placement
-  //override val initialFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR/ w KQkq - 0 1"
+  override val initialFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR/ w KQkq - 0 1"
 //  private val positions = Chess960.positions
-//  def pieces =
-//    Variant.symmetricRank {
-//      positions(scala.util.Random.nextInt(960)) flatMap Role.allByForsyth.get
-//    }
+  val pieces: Map[Pos, Piece] = Variant.symmetricRank(backRank)
+
+
 //  private val positionsMap: Map[String, Int] = positions.zipWithIndex.toMap
 //  def positionNumber(fen: String): Option[Int] =
 //    positionsMap.get(fen.takeWhile('/' !=))
