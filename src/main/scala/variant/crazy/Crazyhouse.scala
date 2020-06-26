@@ -20,18 +20,24 @@ case object Crazyhouse
 //this is going to have chess960 placement
   override val initialFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR/ w KQkq - 0 1"
 //  private val positions = Chess960.positions
-  val pieces: Map[Pos, Piece] = Variant.symmetricRank(backRank)
+  def pieces = Standard.pieces
 
 
 //  private val positionsMap: Map[String, Int] = positions.zipWithIndex.toMap
 //  def positionNumber(fen: String): Option[Int] =
 //    positionsMap.get(fen.takeWhile('/' !=))
 
+  def filterMovesAlreadyMoved(pos: Pos, listOfMoves: List[Move]): (Pos, List[Move]) = {
+    (pos, listOfMoves.filter(m => m.dest.touches(m.orig)))
+  }
+
   // In this variant, a player cant move a piece twice in a row
   override def validMoves(situation: Situation): Map[Pos, List[Move]]  =
-    super.validMoves(situation).filter {
-        case (pos, listOfMoves) => situation.board.crazyData.get.listOfTurnsAndUniquPiecesMoved.isValidMove(situation, (pos, listOfMoves))
-      }
+    super.validMoves(situation).collect {
+        case (pos, listOfMoves) if situation.board.crazyData.get.listOfTurnsAndUniquPiecesMoved.isValidMove(situation, (pos, listOfMoves)) =>
+        filterMovesAlreadyMoved(pos,listOfMoves)
+        case (pos, listOfMoves) => (pos, listOfMoves)
+      }.toMap
 
 
   override def valid(board: Board, strict: Boolean) = {
