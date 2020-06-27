@@ -4,29 +4,29 @@ package variant.crazy
 import chess.variant.crazy.Crazyhouse.storableRoles
 
 case class CrazyhouseData(
-                 pockets: Pockets,
-                 // in crazyhouse, a promoted piece becomes a pawn
-                 // when captured and put in the pocket.
-                 // there we need to remember which pieces are issued from promotions.
-                 // we do that by tracking their positions on the board.
-                 promoted: Set[Pos],
-                 pieceMap: UniquePieceMap,
-                 listOfOuts: Set[UniquePiece],
-                 listOfTurnsAndUniquPiecesMoved: LastThreeMoves
-               ) {
+                           pockets: Pockets,
+                           // in crazyhouse, a promoted piece becomes a pawn
+                           // when captured and put in the pocket.
+                           // there we need to remember which pieces are issued from promotions.
+                           // we do that by tracking their positions on the board.
+                           promoted: Set[Pos],
+                           pieceMap: UniquePieceMap,
+                           listOfOuts: Set[UniquePiece],
+                           listOfTurnsAndUniquPiecesMoved: LastThreeMoves
+                         ) {
 
 
-  def visualStuff(pieces:PieceMap) = {
-  import  listOfTurnsAndUniquPiecesMoved._
-   def doVisual(o : Option[Pos])  = o match {
+  def visualStuff(pieces: PieceMap) = {
+    import listOfTurnsAndUniquPiecesMoved._
+    def doVisual(o: Option[Pos]) = o match {
       case Some(position) => Map(position -> pieces.get(position))
       case None => Map.empty
     }
 
-    val myMap = doVisual(w1) ++ doVisual(w2) ++ doVisual(w3) ++  doVisual(b1) ++ doVisual(b2) ++ doVisual(b3)
-    myMap.collect{
+    val myMap = doVisual(w1) ++ doVisual(w2) ++ doVisual(w3) ++ doVisual(b1) ++ doVisual(b2) ++ doVisual(b3)
+    myMap.collect {
       case (value, Some(piece)) => (Seq(value), piece.unicode)
-    } .toMap
+    }.toMap
   }
 
 
@@ -43,21 +43,26 @@ case class CrazyhouseData(
       case None => this
     }
   }
-  def withListOFRecentPiecesMoved(halfMoveClock: Int, piece: Option[UniquePiece], somePos: Option[Pos], resetDueToCapture: Boolean = false, pawnOrigin: Option[Pos] = None) = {
 
-if(resetDueToCapture) {
-  println("Resetting due to capture")
-  CrazyhouseData(pockets, promoted, pieceMap, listOfOuts,LastThreeMoves(None,None,None,None,None,None))
-}else
-{
-  println("Was not a capture, adding a move as usual")
-
-  CrazyhouseData(pockets, promoted, pieceMap, listOfOuts, listOfTurnsAndUniquPiecesMoved.addAMove(
-        somePos  , piece, pawnOrigin) )
-}
-  }
   def isOuted(piece: UniquePiece): Boolean = {
     listOfOuts.contains(piece)
+  }
+
+  def withListOFRecentPiecesMoved(halfMoveClock: Int, piece: Option[UniquePiece], somePos: Option[Pos], resetDueToCapture: Boolean = false, pawnOrigin: Option[Pos] = None) = {
+
+    if (resetDueToCapture ) {
+      println("Resetting due to capture")
+      if(piece.get.is(White) && listOfTurnsAndUniquPiecesMoved.w2.isEmpty && listOfTurnsAndUniquPiecesMoved.w3.isEmpty )
+        withListOFRecentPiecesMoved(halfMoveClock, piece,somePos,false,None)
+      else if (piece.get.is(Black) && listOfTurnsAndUniquPiecesMoved.b2.isEmpty && listOfTurnsAndUniquPiecesMoved.b3.isEmpty )
+        withListOFRecentPiecesMoved(halfMoveClock, piece,somePos,false,None)
+      else
+        CrazyhouseData(pockets, promoted, pieceMap, listOfOuts, LastThreeMoves(None,None,None,None,None,None)
+    }
+    else {
+      CrazyhouseData(pockets, promoted, pieceMap, listOfOuts, listOfTurnsAndUniquPiecesMoved.addAMove(
+        somePos, piece, pawnOrigin))
+    }
   }
 
   def withUniquePieceMapUpdated(orig: Pos, dest: Pos): (CrazyhouseData, Option[UniquePiece], Option[Pos]) = {
@@ -65,36 +70,36 @@ if(resetDueToCapture) {
     val pieceThatMoved = onThatSquare.headOption.map(_._1)
     pieceThatMoved match {
       //case Some(uniquePiece) if uniquePiece.is(Pawn) && orig.up.get.up.get == dest =>
-       // this.withUniquePieceMapUpdated(orig, orig.up .get)._1
-        //  .withListOFRecentPiecesMoved(15, Some(UniquePiece.♔), Some())
-         // .withUniquePieceMapUpdated(orig.up.get, dest)._1
+      // this.withUniquePieceMapUpdated(orig, orig.up .get)._1
+      //  .withListOFRecentPiecesMoved(15, Some(UniquePiece.♔), Some())
+      // .withUniquePieceMapUpdated(orig.up.get, dest)._1
       case Some(uniquePiece) if uniquePiece.is(King) && orig == chess.Pos.E1 && dest == chess.Pos.H1 =>
         println("WE GOT A WHITE KINGSIDE CASTLE")
- this.withUniquePieceMapUpdated(chess.Pos.E1, chess.Pos.F1  )._1
-        .withUniquePieceMapUpdated( chess.Pos.F1 ,  chess.Pos.G1 )._1
-        .withListOFRecentPiecesMoved(15, Some(UniquePiece.♔), Some(chess.Pos.G1))
-        .withUniquePieceMapUpdated(chess.Pos.H1,chess.Pos.F1)
+        this.withUniquePieceMapUpdated(chess.Pos.E1, chess.Pos.F1)._1
+          .withUniquePieceMapUpdated(chess.Pos.F1, chess.Pos.G1)._1
+          .withListOFRecentPiecesMoved(15, Some(UniquePiece.♔), Some(chess.Pos.G1))
+          .withUniquePieceMapUpdated(chess.Pos.H1, chess.Pos.F1)
 
       case Some(uniquePiece) if uniquePiece.is(King) && orig == chess.Pos.E1 && dest == chess.Pos.A1 =>
         println("WE GOT A WHITE Queenside CASTLE")
-        this.withUniquePieceMapUpdated(chess.Pos.E1, chess.Pos.D1  )._1
-          .withUniquePieceMapUpdated( chess.Pos.D1 ,  chess.Pos.C1 )._1
+        this.withUniquePieceMapUpdated(chess.Pos.E1, chess.Pos.D1)._1
+          .withUniquePieceMapUpdated(chess.Pos.D1, chess.Pos.C1)._1
           .withListOFRecentPiecesMoved(15, Some(UniquePiece.♔), Some(chess.Pos.C1))
-          .withUniquePieceMapUpdated(chess.Pos.A1,chess.Pos.D1)
+          .withUniquePieceMapUpdated(chess.Pos.A1, chess.Pos.D1)
 
       case Some(uniquePiece) if uniquePiece.is(King) && orig == chess.Pos.E8 && dest == chess.Pos.H8 =>
         println("WE GOT A black KINGSIDE CASTLE")
-        this.withUniquePieceMapUpdated(chess.Pos.E8, chess.Pos.F8  )._1
-          .withUniquePieceMapUpdated( chess.Pos.F8 ,  chess.Pos.G8 )._1
+        this.withUniquePieceMapUpdated(chess.Pos.E8, chess.Pos.F8)._1
+          .withUniquePieceMapUpdated(chess.Pos.F8, chess.Pos.G8)._1
           .withListOFRecentPiecesMoved(15, Some(UniquePiece.♚), Some(chess.Pos.G8))
-          .withUniquePieceMapUpdated(chess.Pos.H8,chess.Pos.F8)
+          .withUniquePieceMapUpdated(chess.Pos.H8, chess.Pos.F8)
 
       case Some(uniquePiece) if uniquePiece.is(King) && orig == chess.Pos.E8 && dest == chess.Pos.A8 =>
         println("WE GOT A black queenside CASTLE")
-        this.withUniquePieceMapUpdated(chess.Pos.E8, chess.Pos.D8  )._1
-          .withUniquePieceMapUpdated( chess.Pos.D8 ,  chess.Pos.C8 )._1
+        this.withUniquePieceMapUpdated(chess.Pos.E8, chess.Pos.D8)._1
+          .withUniquePieceMapUpdated(chess.Pos.D8, chess.Pos.C8)._1
           .withListOFRecentPiecesMoved(15, Some(UniquePiece.♚), Some(chess.Pos.C8))
-          .withUniquePieceMapUpdated(chess.Pos.A8,chess.Pos.D8)
+          .withUniquePieceMapUpdated(chess.Pos.A8, chess.Pos.D8)
 
       case Some(uniquePiece) => {
         val mapWithoutPieceThatMoved = pieceMap.removed(uniquePiece)
@@ -136,27 +141,28 @@ if(resetDueToCapture) {
 }
 
 object CrazyhouseData {
-  def     pieceMapToUnique(standardPieceMap: PieceMap) = {
-    val uniquePieceMap = standardPieceMap.map{
-      case (pos,piece) => {
-        val uidFromStartingPosition = pos.x + 8 * pos.y - 9
-        print(s"(${uidFromStartingPosition}, ${piece.unicode} )")
-
-        (UniquePiece(uidFromStartingPosition,piece), pos)
-      }
-    }
-    uniquePieceMap
-  }
   def init(standardPieceMap: PieceMap) = {
 
-    val uniquePieceMap = pieceMapToUnique(standardPieceMap).updated(UniquePiece(950, Piece(White,Pawn)), Pos.posAt(1,2).get)
+    val uniquePieceMap = pieceMapToUnique(standardPieceMap).updated(UniquePiece(950, Piece(White, Pawn)), Pos.posAt(1, 2).get)
     //mann
 
     CrazyhouseData(Pockets(Pocket(Nil),
       Pocket(Nil)), Set.empty,
       uniquePieceMap,
       Set.empty[UniquePiece],
-      LastThreeMoves(None,None,None,None,None,None))
+      LastThreeMoves(None, None, None, None, None, None))
+  }
+
+  def pieceMapToUnique(standardPieceMap: PieceMap) = {
+    val uniquePieceMap = standardPieceMap.map {
+      case (pos, piece) => {
+        val uidFromStartingPosition = pos.x + 8 * pos.y - 9
+        print(s"(${uidFromStartingPosition}, ${piece.unicode} )")
+
+        (UniquePiece(uidFromStartingPosition, piece), pos)
+      }
+    }
+    uniquePieceMap
   }
 }
 
