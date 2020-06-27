@@ -57,7 +57,7 @@ case class CrazyhouseData(
       else if (piece.get.is(Black) && listOfTurnsAndUniquPiecesMoved.b2.isEmpty && listOfTurnsAndUniquPiecesMoved.b3.isEmpty )
         withListOFRecentPiecesMoved(halfMoveClock, piece,somePos,false,None)
       else
-        CrazyhouseData(pockets, promoted, pieceMap, listOfOuts, LastThreeMoves(None,None,None,None,None,None)
+        CrazyhouseData(pockets, promoted, pieceMap, listOfOuts, LastThreeMoves(None,None,None,None,None,None))
     }
     else {
       CrazyhouseData(pockets, promoted, pieceMap, listOfOuts, listOfTurnsAndUniquPiecesMoved.addAMove(
