@@ -56,14 +56,7 @@ case object Crazyhouse
     uci match {
       case Uci.Move(orig, dest, promOption) =>
         board.crazyData.fold(board) { data =>
-          val d1 = capture.fold(data) {
-            data.store(_, dest)
-          }
-          val d2 = promOption.fold(d1.move(orig, dest)) { _ =>
-            d1 promote dest
-          }
-
-          val (d3: CrazyhouseData, piece: Option[UniquePiece], somePos : Option[Pos]) = d2 withUniquePieceMapUpdated(orig, dest)
+          val (d3: CrazyhouseData, piece: Option[UniquePiece], somePos : Option[Pos]) = data withUniquePieceMapUpdated(orig, dest)
 
           val d4 = d3  // withOutedImpersonatorsUpdated(orig, dest, piece, board)
           val d5 = d4 withListOFRecentPiecesMoved(board.history.halfMoveClock, piece, somePos, capture.isDefined,Some(orig))
