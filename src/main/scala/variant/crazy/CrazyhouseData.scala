@@ -48,7 +48,7 @@ case class CrazyhouseData(
     listOfOuts.contains(piece)
   }
 
-  def withListOFRecentPiecesMoved(halfMoveClock: Int, piece: Option[UniquePiece], somePos: Option[Pos], resetDueToCapture: Boolean = false, pawnOrigin: Option[Pos] = None) = {
+  def withListOFRecentPiecesMoved(halfMoveClock: Int, piece: Option[UniquePiece], somePos: Option[Pos], resetDueToCapture: Boolean = false, pawnOrigin: Option[Pos] = None):CrazyhouseData = {
 
     if (resetDueToCapture ) {
       println("Resetting due to capture")
