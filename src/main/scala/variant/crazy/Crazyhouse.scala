@@ -36,7 +36,7 @@ case object Crazyhouse
     super.validMoves(situation).collect {
         case (pos, listOfMoves) if situation.board.crazyData.get.listOfTurnsAndUniquPiecesMoved.isValidMove(situation, (pos, listOfMoves)) =>
           (pos, listOfMoves)
-        case (pos, listOfMoves) =>   filterMovesAlreadyMoved(pos,listOfMoves)
+        case (pos, listOfMoves) =>   (pos, listOfMoves) // filterMovesAlreadyMoved(pos,listOfMoves)
       }.toMap
 
 

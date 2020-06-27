@@ -49,19 +49,19 @@ case class LastThreeMoves(b1:Option[Pos],b2:Option[Pos],b3:Option[Pos],w1:Option
   def addPawnMove(piece: UniquePiece, pos: Pos, originIfPawn: Option[Pos]): LastThreeMoves = {
     originIfPawn match {
       case Some(origin) => piece.genericPiece.color match {
-        case Color.White => //{
-          addMove(origin.up.getOrElse(pos),Color.White  ).  addMove(pos,Color.White  ) //match {
-//            case LastThreeMoves(b1, b2, b3, w1, w2, w3) =>
-//              LastThreeMoves(occupied(b1), b2, b3, w1, w2, w3 )
-//            //if you move the same piece it is like you have ushered in the next time-term
-//          }
-//        }
+        case Color.White => {
+          addMove(origin.up.getOrElse(pos),Color.White  ).  addMove(pos,Color.White  ) match {
+            case LastThreeMoves(b1, b2, b3, w1, w2, w3) =>
+              LastThreeMoves(occupied(b1), occupied(b2), occupied(b3), w1, w2, w3 )
+            //if you move the same piece it is like you have ushered in the next time-term
+          }
+        }
         case Color.Black =>
-          addMove(origin.down.getOrElse(pos),Color.Black  ).  addMove(pos,Color.Black  )  //match {
-//            case LastThreeMoves(b1, b2, b3, w1, w2, w3) =>
-//              LastThreeMoves(b1, b2, b3, occupied(w1), w2, w3)
-//              //if you move the same piece it is like you have ushered in the next time-term
-//          }
+          addMove(origin.down.getOrElse(pos),Color.Black  ).  addMove(pos,Color.Black  )  match {
+            case LastThreeMoves(b1, b2, b3, w1, w2, w3) =>
+              LastThreeMoves(b1, b2, b3, occupied(w1), occupied(w2), occupied(w3))
+              //if you move the same piece it is like you have ushered in the next time-term
+          }
 
       }
       case None => {
